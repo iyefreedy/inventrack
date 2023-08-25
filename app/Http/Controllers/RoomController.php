@@ -14,7 +14,7 @@ class RoomController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Room/Index');
+        return Inertia::render('Room/Index', ['rooms' => Room::all()]);
     }
 
     /**
@@ -34,7 +34,7 @@ class RoomController extends Controller
 
         Room::create($room);
 
-        return redirect('rooms.index');
+        return route('rooms.index');
     }
 
     /**
