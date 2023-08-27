@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { AppMenuItemProps } from "../types/layout";
 import { MenuContext } from "../context/MenuContext";
 import { Link } from "@inertiajs/react";
@@ -30,7 +30,9 @@ const AppMenuitem = (props: AppMenuItemProps) => {
     }, [pathname, searchParams]);
 
     const itemClick = (
-        event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+        event:
+            | React.MouseEvent<HTMLAnchorElement, MouseEvent>
+            | React.KeyboardEvent<HTMLAnchorElement>
     ) => {
         //avoid processing disabled items
         if (item!.disabled) {
@@ -40,7 +42,13 @@ const AppMenuitem = (props: AppMenuItemProps) => {
 
         //execute command
         if (item!.command) {
-            item!.command({ originalEvent: event, item: item! });
+            item!.command({
+                originalEvent: event as React.MouseEvent<
+                    HTMLAnchorElement,
+                    MouseEvent
+                >,
+                item: item!,
+            });
         }
 
         // toggle active state
