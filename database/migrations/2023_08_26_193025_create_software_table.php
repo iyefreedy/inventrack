@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('accessory_types', function (Blueprint $table) {
+        Schema::create('software', function (Blueprint $table) {
             $table->id();
-            $table->string('slug');
+            $table->foreignId('computer_id');
             $table->string('name');
             $table->timestamps();
         });
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('accessory_types');
+        Schema::dropIfExists('software');
     }
 };

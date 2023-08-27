@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\RoomController;
+use App\Http\Resources\RoomResource;
+use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 

@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RoomStoreRequest;
+use App\Http\Requests\RoomUpdateRequest;
+use App\Http\Resources\RoomResource;
 use App\Models\Room;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class RoomController extends Controller
@@ -14,7 +15,11 @@ class RoomController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Room/Index', ['rooms' => Room::all()]);
+        if (!request()->inertia() && request()->expectsJson()) {
+            return new RoomResource(Room::all());
+        }
+
+        return Inertia::render('Room/Index', ['data' => Room::all()]);
     }
 
     /**
@@ -30,35 +35,47 @@ class RoomController extends Controller
      */
     public function store(RoomStoreRequest $request)
     {
-        $room = $request->validated();
+        try {
+            $room = $request->validated();
 
-        Room::create($room);
+            Room::create($room);
 
-        return route('rooms.index');
+            return response()->json([
+                'message' => 'Data ruangan berhasil disimpan',
+                'status' => true,
+                'data' => $room
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage(),
+                'status' => false,
+                'data' => null
+            ]);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Room $room)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Room $room)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Room $room)
+    public function update(RoomUpdateRequest $request, Room $room)
     {
-        //
+        try {
+            $room->fill($request->validated());
+            $room->save();
+
+            return response()->json([
+                'message' => 'Data ruangan berhasil disimpan',
+                'status' => true,
+                'data' => $room
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage(),
+                'status' => false,
+                'data' => null
+            ]);
+        }
     }
 
     /**
@@ -66,6 +83,20 @@ class RoomController extends Controller
      */
     public function destroy(Room $room)
     {
-        //
+        try {
+            $room->delete();
+
+            return response()->json([
+                'message' => 'Data ruangan berhasil dihapus',
+                'status' => true,
+                'data' => $room
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage(),
+                'status' => false,
+                'data' => null
+            ]);
+        }
     }
 }

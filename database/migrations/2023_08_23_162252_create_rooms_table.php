@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code')->unique();
             $table->string('name')->nullable();
-            $table->string('image')->nullable();
-            $table->enum('type', ['CLASSROOM', 'STAFF_ROOM', 'COMPUTER_LAB']);
+            $table->enum('type', ['CLASSROOM', 'STAFF_ROOM', 'LAB', 'OTHER']);
             $table->enum('floor', ['B2', 'B1', '1', '2', '3', '4', '5', '6', '7']);
             $table->timestamps();
         });

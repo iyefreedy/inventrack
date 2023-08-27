@@ -1,0 +1,59 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "room": "R-212",
+            "computer": "PC-212",
+            "condition": 3,
+            "maintenance_date": "2023-08-10",
+            "created_at": "2023-08-10T09:30:00",
+            "updated_at": "2023-08-15T16:45:00",
+            "type": "Pembersihan Internal",
+            "description": "Pembersihan debu dan kotoran"
+        },
+        {
+            "id": 2,
+            "room": "R-418",
+            "computer": "PC-002",
+            "condition": 4,
+            "maintenance_date": "2023-08-10",
+            "created_at": "2023-08-10T09:30:00",
+            "updated_at": "2023-08-15T16:45:00",
+            "type": "Upgrade RAM",
+            "description": "Ditambahkan 8GB RAM"
+        },
+        {
+            "id": 3,
+            "room": "R-209",
+            "computer": "PC-003",
+            "condition": 4,
+            "maintenance_date": "2023-08-10",
+            "created_at": "2023-08-10T09:30:00",
+            "updated_at": "2023-08-15T16:45:00",
+            "type": "Perbaikan Sistem Operasi",
+            "description": "Pembaruan dan perbaikan masalah pada OS"
+        },
+        {
+            "id": 4,
+            "room": "R-315",
+            "computer": "PC-322",
+            "condition": 4,
+            "maintenance_date": "2023-08-10",
+            "created_at": "2023-08-10T09:30:00",
+            "updated_at": "2023-08-15T16:45:00",
+            "type": "Pembaruan Perangkat Lunak",
+            "description": "Pembaruan sistem dan aplikasi"
+        },
+        {
+            "id": 5,
+            "room": "R-507",
+            "computer": "PC-541",
+            "condition": 4,
+            "maintenance_date": "2023-08-10",
+            "created_at": "2023-08-10T09:30:00",
+            "updated_at": "2023-08-15T16:45:00",
+            "type": "Penggantian Hard Drive",
+            "description": "Hard drive 1TB diganti baru"
+        }
+    ]
+}

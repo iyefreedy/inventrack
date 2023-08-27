@@ -14,7 +14,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         ripple: false,
         inputStyle: "outlined",
         menuMode: "static",
-        colorScheme: "dark",
+        colorScheme: "light",
         theme: "md-light-indigo",
         scale: 14,
     });

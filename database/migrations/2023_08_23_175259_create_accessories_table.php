@@ -14,10 +14,9 @@ return new class extends Migration
         Schema::create('accessories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('computer_id');
-            $table->foreignId('accessory_type_id');
             $table->string('name');
-            $table->text('description');
-            $table->date('purchased_at')->nullable();
+            $table->unsignedInteger('condition');
+            $table->enum('type', ['INPUT', 'OUTPUT', 'STORAGE', 'COMMUNICATION', 'NETWORKING', 'OTHER']);
             $table->date('deleted_at')->nullable();
             $table->timestamps();
         });

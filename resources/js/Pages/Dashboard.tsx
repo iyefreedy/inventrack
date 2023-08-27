@@ -13,6 +13,8 @@ import { Demo } from "@/types/demo";
 import { ChartData, ChartOptions } from "chart.js";
 import { Link } from "@inertiajs/react";
 import DefaultLayout from "@/Layouts/DefaultLayout";
+import { PageProps } from "@/types";
+import { Maintenance, MaintenanceService } from "@/service/MaintenanceService";
 
 const lineData: ChartData = {
     labels: ["January", "February", "March", "April", "May", "June", "July"],
@@ -36,8 +38,9 @@ const lineData: ChartData = {
     ],
 };
 
-const Dashboard = () => {
+const Dashboard = ({ auth }: PageProps) => {
     const [products, setProducts] = useState<Demo.Product[]>([]);
+    const [maintenances, setMaintenances] = useState<Maintenance[]>([]);
     const menu1 = useRef<Menu>(null);
     const menu2 = useRef<Menu>(null);
     const [lineOptions, setLineOptions] = useState<ChartOptions>({});
@@ -108,7 +111,9 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
-        ProductService.getProductsSmall().then((data) => setProducts(data));
+        MaintenanceService.getMaintenances().then((data) =>
+            setMaintenances(data)
+        );
     }, []);
 
     useEffect(() => {
@@ -127,10 +132,10 @@ const Dashboard = () => {
     };
 
     return (
-        <DefaultLayout user={undefined}>
+        <DefaultLayout user={auth.user}>
             <div className="grid">
-                <div className="col-12 lg:col-6 xl:col-3">
-                    <div className="card mb-0">
+                {/* <div className="col-12 lg:col-6 xl:col-3"> */}
+                {/* <div className="card mb-0">
                         <div className="flex justify-content-between mb-3">
                             <div>
                                 <span className="block text-500 font-medium mb-3">
@@ -220,53 +225,32 @@ const Dashboard = () => {
                         <span className="text-green-500 font-medium">85 </span>
                         <span className="text-500">responded</span>
                     </div>
-                </div>
+                </div> */}
 
                 <div className="col-12 xl:col-6">
                     <div className="card">
-                        <h5>Recent Sales</h5>
-                        <DataTable
-                            value={products}
-                            rows={5}
-                            paginator
-                            responsiveLayout="scroll"
-                        >
+                        <h5>Recent Maintenances</h5>
+                        <DataTable value={maintenances} rows={5} paginator>
+                            <Column field="room" header="Ruang" />
                             <Column
-                                header="Image"
-                                body={(data) => (
-                                    <img
-                                        className="shadow-2"
-                                        src={`/demo/images/product/${data.image}`}
-                                        alt={data.image}
-                                        width="50"
-                                    />
-                                )}
-                            />
-                            <Column
-                                field="name"
-                                header="Name"
+                                field="computer"
+                                header="Komputer"
                                 sortable
-                                style={{ width: "35%" }}
                             />
                             <Column
-                                field="price"
-                                header="Price"
+                                field="maintenance_date"
+                                header="Tanggal Maintenance"
                                 sortable
-                                style={{ width: "35%" }}
-                                body={(data) => formatCurrency(data.price)}
                             />
+                            <Column header="Jenis Pemeliharaan" field="type" />
                             <Column
-                                header="View"
-                                style={{ width: "15%" }}
-                                body={() => (
-                                    <>
-                                        <Button icon="pi pi-search" text />
-                                    </>
-                                )}
+                                header="Keterangan"
+                                field="description"
+                                style={{ width: "35%" }}
                             />
                         </DataTable>
                     </div>
-                    <div className="card">
+                    {/* <div className="card">
                         <div className="flex justify-content-between align-items-center mb-5">
                             <h5>Best Selling Products</h5>
                             <div>
@@ -571,7 +555,7 @@ const Dashboard = () => {
                                 Get Started
                             </Link>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </DefaultLayout>
