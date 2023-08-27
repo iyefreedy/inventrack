@@ -15,7 +15,15 @@ import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { Rating, RatingChangeEvent } from "primereact/rating";
 import { SelectButtonChangeEvent } from "primereact/selectbutton";
-import { FormEventHandler, useEffect, useState } from "react";
+import {
+    FormEventHandler,
+    JSXElementConstructor,
+    ReactElement,
+    ReactNode,
+    ReactPortal,
+    useEffect,
+    useState,
+} from "react";
 
 const Create = ({ auth }: PageProps) => {
     const [rooms, setRooms] = useState<Room[]>([]);
@@ -235,7 +243,17 @@ const Create = ({ auth }: PageProps) => {
         );
     };
 
-    const groupedItemTemplate = (option) => {
+    const groupedItemTemplate = (option: {
+        label:
+            | string
+            | number
+            | boolean
+            | ReactElement<any, string | JSXElementConstructor<any>>
+            | Iterable<ReactNode>
+            | ReactPortal
+            | null
+            | undefined;
+    }) => {
         return <h6>{option.label}</h6>;
     };
 

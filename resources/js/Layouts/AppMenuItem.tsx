@@ -40,7 +40,7 @@ const AppMenuitem = (props: AppMenuItemProps) => {
 
         //execute command
         if (item!.command) {
-            item!.command({ originalEvent: event, item: item });
+            item!.command({ originalEvent: event, item: item! });
         }
 
         // toggle active state

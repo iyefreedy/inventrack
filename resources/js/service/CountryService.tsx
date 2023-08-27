@@ -1,9 +1,11 @@
-import { Demo } from '../../types/types';
+import { Demo } from "@/types/demo";
 
 export const CountryService = {
     getCountries() {
-        return fetch('/demo/data/countries.json', { headers: { 'Cache-Control': 'no-cache' } })
+        return fetch("/demo/data/countries.json", {
+            headers: { "Cache-Control": "no-cache" },
+        })
             .then((res) => res.json())
             .then((d) => d.data as Demo.Country[]);
-    }
+    },
 };

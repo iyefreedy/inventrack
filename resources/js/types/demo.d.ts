@@ -1,19 +1,19 @@
 /* FullCalendar Types */
-import { EventApi, EventInput } from '@fullcalendar/core';
+import { EventApi, EventInput } from "@fullcalendar/core";
 
 /* Chart.js Types */
-import { ChartData, ChartOptions } from 'chart.js';
+import { ChartData, ChartOptions } from "chart.js";
 
-type InventoryStatus = 'INSTOCK' | 'LOWSTOCK' | 'OUTOFSTOCK';
+type InventoryStatus = "INSTOCK" | "LOWSTOCK" | "OUTOFSTOCK";
 
-type Status = 'DELIVERED' | 'PENDING' | 'RETURNED' | 'CANCELLED';
+type Status = "DELIVERED" | "PENDING" | "RETURNED" | "CANCELLED";
 
-export type LayoutType = 'list' | 'grid';
+export type LayoutType = "list" | "grid";
 export type SortOrderType = 1 | 0 | -1;
 
 export interface CustomEvent {
     name?: string;
-    status?: 'Ordered' | 'Processing' | 'Shipped' | 'Delivered';
+    status?: "Ordered" | "Processing" | "Shipped" | "Delivered";
     date?: string;
     color?: string;
     icon?: string;
@@ -130,7 +130,14 @@ declare namespace Demo {
         inventoryStatus?: InventoryStatus;
         rating?: number;
         orders?: ProductOrder[];
-        [key: string]: string | string[] | number | boolean | undefined | ProductOrder[] | InventoryStatus;
+        [key: string]:
+            | string
+            | string[]
+            | number
+            | boolean
+            | undefined
+            | ProductOrder[]
+            | InventoryStatus;
     };
 
     type ProductOrder = {
@@ -149,6 +156,8 @@ declare namespace Demo {
         paid: boolean;
         date: string;
     };
+
+    type ICountryObject = {};
 
     //CustomerService
     type Customer = {
