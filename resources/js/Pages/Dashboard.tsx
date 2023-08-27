@@ -227,7 +227,7 @@ const Dashboard = ({ auth }: PageProps) => {
                     </div>
                 </div> */}
 
-                <div className="col-12 xl:col-6">
+                <div className="col-12">
                     <div className="card">
                         <h5>Recent Maintenances</h5>
                         <DataTable value={maintenances} rows={5} paginator>

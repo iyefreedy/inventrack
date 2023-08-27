@@ -1,10 +1,16 @@
-import { LayoutContext } from "@/context/LayoutContext";
+import React, { useContext, useEffect } from "react";
+import AppConfig from "./AppConfig";
 import { LayoutContextProps } from "@/types/layout";
-import { PropsWithChildren, useContext, useEffect } from "react";
+import { LayoutContext } from "@/context/LayoutContext";
 
-export default function Guest({ children }: PropsWithChildren) {
-    const { layoutConfig, layoutState } =
+interface SimpleLayoutProps {
+    children: React.ReactNode;
+}
+
+export default function SimpleLayout({ children }: SimpleLayoutProps) {
+    const { layoutConfig, layoutState, setLayoutState } =
         useContext<LayoutContextProps>(LayoutContext);
+
     const darkThemeLink = "/themes/md-dark-indigo/theme.css";
     const lightThemeLink = "/themes/md-light-indigo/theme.css";
 
@@ -28,5 +34,10 @@ export default function Guest({ children }: PropsWithChildren) {
         layoutState.overlayMenuActive,
         layoutState.staticMenuMobileActive,
     ]);
-    return <div>{children}</div>;
+    return (
+        <React.Fragment>
+            {children}
+            <AppConfig simple />
+        </React.Fragment>
+    );
 }

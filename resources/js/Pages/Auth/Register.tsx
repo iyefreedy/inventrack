@@ -1,117 +1,161 @@
-import { useEffect, FormEventHandler } from 'react';
-import GuestLayout from '@/Layouts/GuestLayout';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { useEffect, FormEventHandler, useContext } from "react";
+import { Head, useForm } from "@inertiajs/react";
+import SimpleLayout from "@/Layouts/SimpleLayout";
+import { classNames } from "primereact/utils";
+import { LayoutContext } from "@/context/LayoutContext";
+import { InputText } from "primereact/inputtext";
+import { Password } from "primereact/password";
+import { Button } from "primereact/button";
+import { Checkbox } from "primereact/checkbox";
 
 export default function Register() {
+    const { layoutConfig } = useContext(LayoutContext);
     const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
+        name: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
     });
+
+    const containerClassName = classNames(
+        "surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden",
+        { "p-input-filled": layoutConfig.inputStyle === "filled" }
+    );
 
     useEffect(() => {
         return () => {
-            reset('password', 'password_confirmation');
+            reset("password", "password_confirmation");
         };
     }, []);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        post(route('register'));
+        post(route("register"));
     };
 
     return (
-        <GuestLayout>
+        <SimpleLayout>
             <Head title="Register" />
 
             <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="name" value="Name" />
+                <div className={containerClassName}>
+                    <div className="flex flex-column align-items-center justify-content-center">
+                        <img
+                            src={`/layout/images/inventrack-logo.png`}
+                            alt="Sakai logo"
+                            className="mb-5 w-6rem flex-shrink-0"
+                        />
+                        <div
+                            style={{
+                                borderRadius: "56px",
+                                padding: "0.3rem",
+                                background:
+                                    "linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)",
+                            }}
+                        >
+                            <div
+                                className="w-full surface-card py-8 px-5 sm:px-8"
+                                style={{ borderRadius: "53px" }}
+                            >
+                                <div className="text-center mb-4">
+                                    <div className="text-900 text-3xl font-medium mb-3">
+                                        Welcome to Inventrack!
+                                    </div>
+                                    <span className="text-600 font-medium">
+                                        Sign up to continue
+                                    </span>
+                                </div>
 
-                    <TextInput
-                        id="name"
-                        name="name"
-                        value={data.name}
-                        className="mt-1 block w-full"
-                        autoComplete="name"
-                        isFocused={true}
-                        onChange={(e) => setData('name', e.target.value)}
-                        required
-                    />
+                                <div>
+                                    <label
+                                        htmlFor="name"
+                                        className="block text-900 text-xl font-medium mb-2"
+                                    >
+                                        Name
+                                    </label>
+                                    <InputText
+                                        id="name"
+                                        type="text"
+                                        placeholder="Name"
+                                        className="w-full md:w-30rem mb-4"
+                                        style={{ padding: "1rem" }}
+                                        value={data.name}
+                                        onChange={(e) =>
+                                            setData("name", e.target.value)
+                                        }
+                                    />
 
-                    <InputError message={errors.name} className="mt-2" />
-                </div>
+                                    <label
+                                        htmlFor="email1"
+                                        className="block text-900 text-xl font-medium mb-2"
+                                    >
+                                        Email
+                                    </label>
+                                    <InputText
+                                        id="email1"
+                                        type="email"
+                                        placeholder="Email address"
+                                        className="w-full md:w-30rem mb-4"
+                                        style={{ padding: "1rem" }}
+                                        value={data.email}
+                                        onChange={(e) =>
+                                            setData("email", e.target.value)
+                                        }
+                                    />
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="email" value="Email" />
+                                    <label
+                                        htmlFor="password"
+                                        className="block text-900 font-medium text-xl mb-2"
+                                    >
+                                        Password
+                                    </label>
+                                    <Password
+                                        inputId="password"
+                                        value={data.password}
+                                        onChange={(e) =>
+                                            setData("password", e.target.value)
+                                        }
+                                        placeholder="Password"
+                                        toggleMask
+                                        className="w-full mb-4"
+                                        inputClassName="w-full p-3 md:w-30rem"
+                                    ></Password>
 
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        onChange={(e) => setData('email', e.target.value)}
-                        required
-                    />
+                                    <label
+                                        htmlFor="confirmPassword"
+                                        className="block text-900 font-medium text-xl mb-2"
+                                    >
+                                        Password Confirmation
+                                    </label>
+                                    <Password
+                                        inputId="confirmPassword"
+                                        value={data.password_confirmation}
+                                        onChange={(e) =>
+                                            setData(
+                                                "password_confirmation",
+                                                e.target.value
+                                            )
+                                        }
+                                        placeholder="Password Confirmation"
+                                        toggleMask
+                                        className="w-full mb-4"
+                                        inputClassName="w-full p-3 md:w-30rem"
+                                    ></Password>
 
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                        required
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password_confirmation" value="Confirm Password" />
-
-                    <TextInput
-                        id="password_confirmation"
-                        type="password"
-                        name="password_confirmation"
-                        value={data.password_confirmation}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                        required
-                    />
-
-                    <InputError message={errors.password_confirmation} className="mt-2" />
-                </div>
-
-                <div className="flex items-center justify-end mt-4">
-                    <Link
-                        href={route('login')}
-                        className="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
-                    >
-                        Already registered?
-                    </Link>
-
-                    <PrimaryButton className="ml-4" disabled={processing}>
-                        Register
-                    </PrimaryButton>
+                                    <div className="flex align-items-center justify-content-between mb-5 gap-5"></div>
+                                    <Button
+                                        type="submit"
+                                        className="w-full p-3 text-xl"
+                                        label="Sign In"
+                                        disabled={processing}
+                                    ></Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </form>
-        </GuestLayout>
+        </SimpleLayout>
     );
 }

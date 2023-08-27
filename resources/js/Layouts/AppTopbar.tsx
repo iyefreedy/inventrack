@@ -3,7 +3,9 @@ import { AppTopbarRef, LayoutContextProps } from "@/types/layout";
 
 import { LayoutContext } from "../context/LayoutContext";
 import { classNames } from "primereact/utils";
-import { Link } from "@inertiajs/react";
+import { Link, useForm } from "@inertiajs/react";
+import { MenuItem } from "primereact/menuitem";
+import { Menu } from "primereact/menu";
 
 const AppTopbar = forwardRef<AppTopbarRef>((_, ref) => {
     const {
@@ -14,9 +16,12 @@ const AppTopbar = forwardRef<AppTopbarRef>((_, ref) => {
         setLayoutConfig,
     } = useContext<LayoutContextProps>(LayoutContext);
 
+    const { post } = useForm();
+
     const menubuttonRef = useRef(null);
     const topbarmenuRef = useRef(null);
     const topbarmenubuttonRef = useRef(null);
+    const profileMenu = useRef<Menu>(null);
 
     useImperativeHandle(ref, () => ({
         menubutton: menubuttonRef.current,
@@ -32,13 +37,21 @@ const AppTopbar = forwardRef<AppTopbarRef>((_, ref) => {
         }));
     };
 
+    const items: MenuItem[] = [
+        {
+            label: "Logout",
+            icon: "pi pi-sign-out",
+            command: () => {
+                post(route("logout"));
+            },
+        },
+    ];
+
     return (
         <div className="layout-topbar">
             <Link href={"/"} className="layout-topbar-logo">
                 <img
-                    src={`https://sakai.primereact.org/layout/images/logo-${
-                        layoutConfig.colorScheme !== "light" ? "white" : "dark"
-                    }.svg`}
+                    src={`/layout/images/inventrack-logo.png`}
                     width="47.22px"
                     height={"35px"}
                     alt="logo"
@@ -93,15 +106,20 @@ const AppTopbar = forwardRef<AppTopbarRef>((_, ref) => {
                     <i className="pi pi-user"></i>
                     <span>Profile</span>
                 </button>
-                <Link href="/documentation">
-                    <button
-                        type="button"
-                        className="p-link layout-topbar-button"
-                    >
-                        <i className="pi pi-cog"></i>
-                        <span>Settings</span>
-                    </button>
-                </Link>
+                <Menu
+                    model={items}
+                    popup
+                    ref={profileMenu}
+                    id="profile_menu_right"
+                />
+                <button
+                    type="button"
+                    className="p-link layout-topbar-button"
+                    onClick={(e) => profileMenu.current?.toggle(e)}
+                >
+                    <i className="pi pi-cog"></i>
+                    <span>Settings</span>
+                </button>
             </div>
         </div>
     );
