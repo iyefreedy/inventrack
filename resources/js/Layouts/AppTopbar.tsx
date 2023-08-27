@@ -56,7 +56,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((_, ref) => {
                     height={"35px"}
                     alt="logo"
                 />
-                <span>CompTracker</span>
+                <span>InvenTrack</span>
             </Link>
 
             <button
