@@ -66,7 +66,7 @@ class ComputerController extends Controller
             }
             DB::commit();
 
-            return Redirect::back()->with([
+            return Redirect::route('computers.index')->with([
                 'message' => 'Data berhasil disimpan'
             ]);
         } catch (\Throwable $th) {

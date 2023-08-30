@@ -40,6 +40,20 @@ export type AccessoryType =
     | "NETWORKING"
     | "OTHER";
 
+export type OperatingSystem =
+    | "WINDOWS_7"
+    | "WINDOWS_8"
+    | "WINDOWS_10"
+    | "WINDOWS_11"
+    | "WINDOWS_XP"
+    | "WINDOWS_SERVER"
+    | "UBUNTU"
+    | "DEBIAN"
+    | "VENTURA"
+    | "MONTEREY"
+    | "BIG_SUR"
+    | "CATALINA";
+
 export interface Computer {
     id?: bigint | null;
     room_id: bigint | undefined;
@@ -52,7 +66,7 @@ export interface Computer {
     motherboard: string;
     power_supply: string;
     condition: number;
-    operating_system: string;
+    operating_system: OperatingSystem | undefined;
     operating_system_activation: boolean;
     accessories: Accessory[];
     case: string;

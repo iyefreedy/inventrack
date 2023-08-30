@@ -9,17 +9,16 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button } from "primereact/button";
 import { Toolbar } from "primereact/toolbar";
 import { Dialog } from "primereact/dialog";
-import { RadioButtonChangeEvent } from "primereact/radiobutton";
 import { Toast } from "primereact/toast";
 import { RouteParam, RouteParamsWithQueryOverload } from "ziggy-js";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router, useForm } from "@inertiajs/react";
 import { Message } from "primereact/message";
 
 type RoomIndexPageProps = {
-    data: Room[];
+    rooms: Room[];
 };
 
-const Index = ({ data, auth, flash }: PageProps & RoomIndexPageProps) => {
+const Index = ({ rooms, auth, flash }: PageProps & RoomIndexPageProps) => {
     const dropdownRoomTypeValues: InputValue[] = [
         { name: "Ruang Kelas", value: "CLASSROOM" },
         { name: "Ruang Kerja", value: "STAFF_ROOM" },
@@ -47,7 +46,6 @@ const Index = ({ data, auth, flash }: PageProps & RoomIndexPageProps) => {
         type: undefined,
     };
 
-    const [roomDialog, setRoomDialog] = useState<boolean>(false);
     const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
     const [filters, setFilters] = useState<DataTableFilterMeta>({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -58,27 +56,15 @@ const Index = ({ data, auth, flash }: PageProps & RoomIndexPageProps) => {
     });
     const toast = useRef<Toast>(null);
     const dt = useRef<DataTable<Room[]>>(null);
-    const [rooms, setRooms] = useState<Room[]>([]);
+    const [data, setData] = useState<Room[]>([]);
     const [room, setRoom] = useState<Room>(emptyRoom);
     const [selectedRooms, setSelectedRooms] = useState<Room[]>([]);
     const [deleteRoomDialog, setDeleteRoomDialog] = useState<boolean>(false);
     const [deleteRoomsDialog, setDeleteRoomsDialog] = useState<boolean>(false);
-    const [submitted, setSubmitted] = useState<boolean>(false);
 
     useEffect(() => {
-        setRooms([...data]);
+        setData([...rooms]);
     }, []);
-
-    const openNew = () => {
-        setRoom(emptyRoom);
-        setSubmitted(false);
-        setRoomDialog(true);
-    };
-
-    const hideDialog = () => {
-        setSubmitted(false);
-        setRoomDialog(false);
-    };
 
     const hideDeleteRoomDialog = () => {
         setDeleteRoomDialog(false);
@@ -86,11 +72,6 @@ const Index = ({ data, auth, flash }: PageProps & RoomIndexPageProps) => {
 
     const hideDeleteRoomsDialog = () => {
         setDeleteRoomsDialog(false);
-    };
-
-    const editRoom = (room: Room) => {
-        setRoom({ ...room });
-        setRoomDialog(true);
     };
 
     const confirmDeleteRoom = (room: Room) => {
@@ -102,88 +83,15 @@ const Index = ({ data, auth, flash }: PageProps & RoomIndexPageProps) => {
         setDeleteRoomsDialog(true);
     };
 
-    const saveRoom = async () => {
-        setSubmitted(true);
-        console.log(room);
-        let _rooms = [...rooms];
-        let _room = { ...room };
-
-        if (room.id !== null) {
-            console.log(`Update room : ${room}`);
-            // Update room
-            const request = await window.axios.patch(
-                route(
-                    "rooms.update",
-                    _room as unknown as RouteParamsWithQueryOverload
-                )
-            );
-            const response = request.data;
-
-            if (response.status) {
-                toast.current?.show({
-                    severity: "success",
-                    summary: "Successful",
-                    detail: response.message,
-                    life: 3000,
-                });
-            } else {
-                toast.current?.show({
-                    severity: "error",
-                    summary: "Failed",
-                    detail: response.message,
-                    life: 3000,
-                });
-            }
-
-            const index = findIndexById(room.id!);
-            _rooms[index] = _room;
-        } else {
-            console.log(`Create room : ${room}`);
-            // Create room
-            const request = await window.axios.post(
-                route("rooms.store"),
-                _room
-            );
-            const response = request.data;
-
-            if (response.status) {
-                toast.current?.show({
-                    severity: "success",
-                    summary: "Successful",
-                    detail: response.message,
-                    life: 3000,
-                });
-            } else {
-                toast.current?.show({
-                    severity: "error",
-                    summary: "Failed",
-                    detail: response.message,
-                    life: 3000,
-                });
-            }
-
-            _rooms.push(_room);
-        }
-
-        setRooms(_rooms);
-        setRoomDialog(false);
-        setRoom(emptyRoom);
-    };
-
     const deleteRoom = async () => {
         const _room = { ...room };
         const request = await window.axios.delete(
-            route(
-                "rooms.destroy",
-                _room as unknown as RouteParamsWithQueryOverload
-            )
+            route("rooms.destroy", _room as unknown as RouteParam)
         );
 
         const response = request.data;
         if (response.status) {
-            let _rooms = rooms.filter((val) => val.id !== room.id);
-
-            setRooms(_rooms);
+            let _data = data.filter((val) => val.id !== room.id);
 
             toast.current?.show({
                 severity: "success",
@@ -191,6 +99,8 @@ const Index = ({ data, auth, flash }: PageProps & RoomIndexPageProps) => {
                 detail: response.message,
                 life: 3000,
             });
+
+            setData([..._data]);
         } else {
             toast.current?.show({
                 severity: "error",
@@ -205,7 +115,7 @@ const Index = ({ data, auth, flash }: PageProps & RoomIndexPageProps) => {
     };
 
     const deleteSelectedRooms = () => {
-        let _rooms = rooms.filter((val) => !selectedRooms.includes(val));
+        let _data = data.filter((val) => !selectedRooms.includes(val));
 
         selectedRooms.forEach(async (val) => {
             const _room = { ...val };
@@ -217,56 +127,16 @@ const Index = ({ data, auth, flash }: PageProps & RoomIndexPageProps) => {
             );
         });
 
-        setRooms(_rooms);
         setDeleteRoomsDialog(false);
         setSelectedRooms([]);
         toast.current?.show({
             severity: "success",
             summary: "Successful",
-            detail: "Products Deleted",
+            detail: "Rooms Deleted",
             life: 3000,
         });
-    };
 
-    const findIndexById = (id: bigint) => {
-        let index = -1;
-
-        for (let i = 0; i < rooms.length; i++) {
-            if (rooms[i].id === id) {
-                index = i;
-                break;
-            }
-        }
-
-        return index;
-    };
-
-    const onTypeChange = (e: RadioButtonChangeEvent) => {
-        console.log(e.value);
-        let _room = { ...room };
-
-        _room["type"] = e.value;
-        setRoom(_room);
-    };
-
-    const onFloorChange = (e: DropdownChangeEvent) => {
-        let _room = { ...room };
-
-        _room["floor"] = e.value;
-        setRoom(_room);
-    };
-
-    const onInputChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
-        name: string
-    ) => {
-        const val = (e.target && e.target.value) || "";
-        let _room = { ...room };
-
-        // @ts-ignore
-        _room[`${name}`] = val;
-
-        setRoom(_room);
+        setData([..._data]);
     };
 
     const leftToolbarTemplate = () => {
@@ -364,18 +234,6 @@ const Index = ({ data, auth, flash }: PageProps & RoomIndexPageProps) => {
         );
     };
 
-    const roomDialogFooter = (
-        <React.Fragment>
-            <Button
-                label="Cancel"
-                icon="pi pi-times"
-                outlined
-                onClick={hideDialog}
-            />
-            <Button label="Save" icon="pi pi-check" onClick={saveRoom} />
-        </React.Fragment>
-    );
-
     const deleteRoomDialogFooter = (
         <React.Fragment>
             <Button
@@ -392,6 +250,7 @@ const Index = ({ data, auth, flash }: PageProps & RoomIndexPageProps) => {
             />
         </React.Fragment>
     );
+
     const deleteRoomsDialogFooter = (
         <React.Fragment>
             <Button
@@ -442,17 +301,23 @@ const Index = ({ data, auth, flash }: PageProps & RoomIndexPageProps) => {
                     <Toast ref={toast} />
                     <div className="card">
                         <Toolbar start={leftToolbarTemplate} />
-                        {flash.message ? (
-                            <Message severity="success" text={flash.message} />
-                        ) : null}
-                        {flash.error ? (
-                            <Message severity="error" text={flash.error} />
-                        ) : null}
+
+                        <div className="col-12">
+                            {flash.message ? (
+                                <Message
+                                    severity="success"
+                                    text={flash.message}
+                                />
+                            ) : null}
+                            {flash.error ? (
+                                <Message severity="error" text={flash.error} />
+                            ) : null}
+                        </div>
 
                         <DataTable
                             ref={dt}
-                            value={rooms}
-                            dataKey="code"
+                            value={data}
+                            dataKey="id"
                             paginator
                             rows={10}
                             rowsPerPageOptions={[5, 10, 25]}
@@ -533,7 +398,7 @@ const Index = ({ data, auth, flash }: PageProps & RoomIndexPageProps) => {
                         <span>
                             Apakah anda yakin ingin menghapus{" "}
                             <b>
-                                {room.code}-({room.name})
+                                {room.code}-{room.name ?? `(${room.name})`}
                             </b>
                             ?
                         </span>

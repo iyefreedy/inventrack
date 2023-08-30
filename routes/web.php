@@ -27,17 +27,17 @@ Route::get('/', function () {
     ]);
 });
 
-// Route::get('/dashboard', function () {
-//     return Inertia::render('Dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 /**
  * Dashboard route without middleware
  * For testing purpose only
  */
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return Inertia::render('Dashboard');
+// })->name('dashboard');
 
 
 
@@ -49,7 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('computers', ComputerController::class);
-    Route::resource('rooms', RoomController::class)->except(['edit', 'show']);
+    Route::resource('rooms', RoomController::class)->except(['show']);
 });
 
 require __DIR__ . '/auth.php';

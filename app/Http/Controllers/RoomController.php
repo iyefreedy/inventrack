@@ -6,6 +6,7 @@ use App\Http\Requests\RoomStoreRequest;
 use App\Http\Requests\RoomUpdateRequest;
 use App\Http\Resources\RoomResource;
 use App\Models\Room;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
@@ -14,13 +15,16 @@ class RoomController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        if (!request()->inertia() && request()->expectsJson()) {
+
+        if (!$request->inertia() && $request->expectsJson()) {
             return new RoomResource(Room::all());
         }
 
-        return Inertia::render('Room/Index', ['data' => Room::all()]);
+        return Inertia::render('Room/Index', [
+            'rooms' => Room::all(['*'])
+        ]);
     }
 
     /**

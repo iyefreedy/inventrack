@@ -8,9 +8,11 @@ import {
     Room,
     Software,
 } from "@/types";
-import { useForm } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import { Button } from "primereact/button";
 import { Checkbox } from "primereact/checkbox";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { Rating, RatingChangeEvent } from "primereact/rating";
@@ -38,7 +40,7 @@ const Create = ({ auth }: PageProps) => {
         workgroup: "",
         motherboard: "",
         case: "",
-        operating_system: "",
+        operating_system: undefined,
         operating_system_activation: false,
         power_supply: "",
         accessories: [],
@@ -232,6 +234,38 @@ const Create = ({ auth }: PageProps) => {
         setData("softwares", _softwares);
     };
 
+    const confirmDeleteAccessory = (index: number, event: any) => {
+        confirmPopup({
+            target: event.currentTarget,
+            message: "Are you sure you want to delete this accessory?",
+            icon: "pi pi-exclamation-triangle",
+            accept: () => acceptDeleteAccessory(index),
+        });
+    };
+
+    const acceptDeleteAccessory = (index: number) => {
+        const _accesories = [...accessories];
+        _accesories.splice(index, 1);
+        setAccessories([..._accesories]);
+        setData("accessories", _accesories);
+    };
+
+    const confirmDeleteSoftware = (index: number, event: any) => {
+        confirmPopup({
+            target: event.currentTarget,
+            message: "Are you sure you want to delete this software?",
+            icon: "pi pi-exclamation-triangle",
+            accept: () => acceptDeleteSoftware(index),
+        });
+    };
+
+    const acceptDeleteSoftware = (index: number) => {
+        const _softwares = [...softwares];
+        _softwares.splice(index, 1);
+        setSoftwares([..._softwares]);
+        setData("softwares", _softwares);
+    };
+
     // Templating
     const roomDropdownItemTemplate = (room: Room) => {
         return (
@@ -243,22 +277,13 @@ const Create = ({ auth }: PageProps) => {
         );
     };
 
-    const groupedItemTemplate = (option: {
-        label:
-            | string
-            | number
-            | boolean
-            | ReactElement<any, string | JSXElementConstructor<any>>
-            | Iterable<ReactNode>
-            | ReactPortal
-            | null
-            | undefined;
-    }) => {
+    const groupedItemTemplate = (option: any) => {
         return <h6>{option.label}</h6>;
     };
 
     return (
         <DefaultLayout user={auth.user}>
+            <Head title="Add Computer" />
             <div className="grid">
                 <div className="col-12">
                     <div className="card">
@@ -458,7 +483,23 @@ const Create = ({ auth }: PageProps) => {
                                         className="formgrid grid col-12 mb-4 border-b border-gray-400"
                                         key={index}
                                     >
-                                        <h6>{`Aksesoris ${index + 1}`}</h6>
+                                        <div className="col-12 flex items-center justify-between">
+                                            <h6>{`Aksesoris ${index + 1}`}</h6>
+                                            <Button
+                                                icon="pi pi-times"
+                                                type="button"
+                                                rounded
+                                                outlined
+                                                severity="danger"
+                                                aria-label="Cancel"
+                                                onClick={(e) =>
+                                                    confirmDeleteAccessory(
+                                                        index,
+                                                        e
+                                                    )
+                                                }
+                                            />
+                                        </div>
                                         <div className="field col-12">
                                             <label
                                                 htmlFor={`accessoryName-${index}`}
@@ -522,6 +563,8 @@ const Create = ({ auth }: PageProps) => {
                                                 }
                                             />
                                         </div>
+
+                                        <ConfirmPopup />
                                     </div>
                                 ))}
 
@@ -548,7 +591,23 @@ const Create = ({ auth }: PageProps) => {
                                         className="formgrid grid col-12 mb-4 border-b border-gray-400"
                                         key={index}
                                     >
-                                        <h6>{`Software ${index + 1}`}</h6>
+                                        <div className="col-12 flex items-center justify-between">
+                                            <h6>{`Software ${index + 1}`}</h6>
+                                            <Button
+                                                icon="pi pi-times"
+                                                type="button"
+                                                rounded
+                                                outlined
+                                                severity="danger"
+                                                aria-label="Cancel"
+                                                onClick={(e) =>
+                                                    confirmDeleteSoftware(
+                                                        index,
+                                                        e
+                                                    )
+                                                }
+                                            />
+                                        </div>
                                         <div className="field col-12">
                                             <label
                                                 htmlFor={`softwareName-${index}`}
