@@ -6,6 +6,7 @@ use App\Http\Requests\RoomStoreRequest;
 use App\Http\Requests\RoomUpdateRequest;
 use App\Http\Resources\RoomResource;
 use App\Models\Room;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class RoomController extends Controller
@@ -40,18 +41,18 @@ class RoomController extends Controller
 
             Room::create($room);
 
-            return response()->json([
-                'message' => 'Data ruangan berhasil disimpan',
-                'status' => true,
-                'data' => $room
-            ]);
+            return Redirect::route('rooms.index')->with(['message' => 'Successfull. Room created!']);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => $th->getMessage(),
-                'status' => false,
-                'data' => null
-            ]);
+            return Redirect::back()->with(['error' => $th->getMessage()]);
         }
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Room $room)
+    {
+        return Inertia::render('Room/Edit', ['room' => $room]);
     }
 
 
@@ -64,17 +65,9 @@ class RoomController extends Controller
             $room->fill($request->validated());
             $room->save();
 
-            return response()->json([
-                'message' => 'Data ruangan berhasil disimpan',
-                'status' => true,
-                'data' => $room
-            ]);
+            return Redirect::route('rooms.index')->with(['message' => 'Successfully! Room updated.']);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => $th->getMessage(),
-                'status' => false,
-                'data' => null
-            ]);
+            return Redirect::route('rooms.index')->with(['error' => $th->getMessage()]);
         }
     }
 

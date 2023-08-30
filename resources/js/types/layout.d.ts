@@ -6,8 +6,7 @@ import React, {
     ReactNode,
     MutableRefObject,
 } from "react";
-import { Demo } from "./demo";
-import { Toast } from "primereact/toast";
+import ziggyRoute, { Router } from "ziggy-js";
 
 export type ChildContainerProps = {
     children: ReactNode;

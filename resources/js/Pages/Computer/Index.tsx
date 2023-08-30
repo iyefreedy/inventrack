@@ -1,6 +1,6 @@
 import DefaultLayout from "@/Layouts/DefaultLayout";
 import { Computer, PageProps } from "@/types";
-import { Link } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import {
@@ -85,6 +85,7 @@ const Index = ({ data, auth }: ComputerIndexPageProps) => {
 
     return (
         <DefaultLayout user={auth.user}>
+            <Head title="Computers" />
             <div className="grid">
                 <div className="col-12">
                     <div className="card">

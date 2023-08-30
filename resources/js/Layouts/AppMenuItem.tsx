@@ -18,8 +18,9 @@ const AppMenuitem = (props: AppMenuItemProps) => {
         : String(props.index);
     const isActiveRoute = item!.to && pathname === item!.to;
     const active = activeMenu === key || activeMenu.startsWith(key + "-");
+    console.log(route(undefined, undefined, false));
     const onRouteChange = (url: string) => {
-        if (item!.to && item!.to === url) {
+        if (item?.to || item?.to === url) {
             setActiveMenu(key);
         }
     };
@@ -29,11 +30,7 @@ const AppMenuitem = (props: AppMenuItemProps) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pathname, searchParams]);
 
-    const itemClick = (
-        event:
-            | React.MouseEvent<HTMLAnchorElement, MouseEvent>
-            | React.KeyboardEvent<HTMLAnchorElement>
-    ) => {
+    const itemClick = (event: any) => {
         //avoid processing disabled items
         if (item!.disabled) {
             event.preventDefault();
@@ -43,10 +40,7 @@ const AppMenuitem = (props: AppMenuItemProps) => {
         //execute command
         if (item!.command) {
             item!.command({
-                originalEvent: event as React.MouseEvent<
-                    HTMLAnchorElement,
-                    MouseEvent
-                >,
+                originalEvent: event,
                 item: item!,
             });
         }
@@ -91,8 +85,8 @@ const AppMenuitem = (props: AppMenuItemProps) => {
                 <div className="layout-menuitem-root-text">{item!.label}</div>
             )}
             {(!item!.to || item!.items) && item!.visible !== false ? (
-                <a
-                    href={item!.url}
+                <Link
+                    href={item!.to!}
                     onClick={(e) => itemClick(e)}
                     className={classNames(item!.class, "p-ripple")}
                     target={item!.target}
@@ -109,7 +103,7 @@ const AppMenuitem = (props: AppMenuItemProps) => {
                         <i className="pi pi-fw pi-angle-down layout-submenu-toggler"></i>
                     )}
                     <Ripple />
-                </a>
+                </Link>
             ) : null}
 
             {item!.to && !item!.items && item!.visible !== false ? (

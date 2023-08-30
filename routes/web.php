@@ -49,7 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('computers', ComputerController::class);
-    Route::resource('rooms', RoomController::class)->except(['edit', 'show', 'create']);
+    Route::resource('rooms', RoomController::class)->except(['edit', 'show']);
 });
 
 require __DIR__ . '/auth.php';

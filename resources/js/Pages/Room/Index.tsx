@@ -9,16 +9,17 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button } from "primereact/button";
 import { Toolbar } from "primereact/toolbar";
 import { Dialog } from "primereact/dialog";
-import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
-import { classNames } from "primereact/utils";
+import { RadioButtonChangeEvent } from "primereact/radiobutton";
 import { Toast } from "primereact/toast";
-import { RouteParamsWithQueryOverload } from "ziggy-js";
+import { RouteParam, RouteParamsWithQueryOverload } from "ziggy-js";
+import { Head, Link } from "@inertiajs/react";
+import { Message } from "primereact/message";
 
 type RoomIndexPageProps = {
     data: Room[];
 };
 
-const Index = ({ data, auth }: PageProps & RoomIndexPageProps) => {
+const Index = ({ data, auth, flash }: PageProps & RoomIndexPageProps) => {
     const dropdownRoomTypeValues: InputValue[] = [
         { name: "Ruang Kelas", value: "CLASSROOM" },
         { name: "Ruang Kerja", value: "STAFF_ROOM" },
@@ -271,12 +272,10 @@ const Index = ({ data, auth }: PageProps & RoomIndexPageProps) => {
     const leftToolbarTemplate = () => {
         return (
             <div className="flex flex-wrap gap-2">
-                <Button
-                    label="New"
-                    icon="pi pi-plus"
-                    severity="success"
-                    onClick={openNew}
-                />
+                <Link href={route("rooms.create")}>
+                    <Button label="New" icon="pi pi-plus" severity="success" />
+                </Link>
+
                 <Button
                     label="Delete"
                     icon="pi pi-trash"
@@ -413,13 +412,17 @@ const Index = ({ data, auth }: PageProps & RoomIndexPageProps) => {
     const actionBodyTemplate = (rowData: Room) => {
         return (
             <React.Fragment>
-                <Button
-                    icon="pi pi-pencil"
-                    rounded
-                    outlined
-                    className="mr-2"
-                    onClick={() => editRoom(rowData)}
-                />
+                <Link
+                    href={route("rooms.edit", rowData as unknown as RouteParam)}
+                >
+                    <Button
+                        icon="pi pi-pencil"
+                        rounded
+                        outlined
+                        className="mr-2"
+                    />
+                </Link>
+
                 <Button
                     icon="pi pi-trash"
                     rounded
@@ -433,11 +436,19 @@ const Index = ({ data, auth }: PageProps & RoomIndexPageProps) => {
 
     return (
         <DefaultLayout user={auth.user}>
+            <Head title="Rooms" />
             <div className="grid">
                 <div className="col-12">
                     <Toast ref={toast} />
                     <div className="card">
                         <Toolbar start={leftToolbarTemplate} />
+                        {flash.message ? (
+                            <Message severity="success" text={flash.message} />
+                        ) : null}
+                        {flash.error ? (
+                            <Message severity="error" text={flash.error} />
+                        ) : null}
+
                         <DataTable
                             ref={dt}
                             value={rooms}
@@ -502,109 +513,6 @@ const Index = ({ data, auth }: PageProps & RoomIndexPageProps) => {
                     </div>
                 </div>
             </div>
-
-            {/* Create and edit dialog */}
-            <Dialog
-                header="Detail Ruang"
-                visible={roomDialog}
-                style={{ minWidth: "30vw" }}
-                className="p-fluid mx-2"
-                modal
-                onHide={hideDialog}
-                footer={roomDialogFooter}
-            >
-                <div className="field">
-                    <label htmlFor="name" className="font-bold">
-                        Kode Ruang
-                    </label>
-                    <InputText
-                        id="code"
-                        value={room.code}
-                        required
-                        autoFocus
-                        onChange={(e) => onInputChange(e, "code")}
-                        className={classNames({
-                            "p-invalid": submitted && !room.code,
-                        })}
-                    />
-                    {submitted && !room.code && (
-                        <small className="p-error">
-                            Kode ruang wajib diisi.
-                        </small>
-                    )}
-                </div>
-
-                <div className="field">
-                    <label htmlFor="name" className="font-bold">
-                        Nama
-                    </label>
-                    <InputText
-                        id="name"
-                        value={room.name ?? ""}
-                        onChange={(e) => onInputChange(e, "name")}
-                    />
-                </div>
-
-                <div className="field">
-                    <label className="mb-3 font-bold">Jenis Ruang</label>
-                    <div className="formgrid grid">
-                        <div className="field-radiobutton col-6">
-                            <RadioButton
-                                inputId="type1"
-                                name="type"
-                                value="CLASSROOM"
-                                checked={room.type === "CLASSROOM"}
-                                onChange={onTypeChange}
-                            />
-                            <label htmlFor="type1">Ruang Kelas</label>
-                        </div>
-                        <div className="field-radiobutton col-6">
-                            <RadioButton
-                                inputId="type2"
-                                name="type"
-                                value="STAFF_ROOM"
-                                checked={room.type === "STAFF_ROOM"}
-                                onChange={onTypeChange}
-                            />
-                            <label htmlFor="type2">Ruang Kerja</label>
-                        </div>
-                        <div className="field-radiobutton col-6">
-                            <RadioButton
-                                inputId="type3"
-                                name="type"
-                                value="LAB"
-                                checked={room.type === "LAB"}
-                                onChange={onTypeChange}
-                            />
-                            <label htmlFor="type3">Ruang Lab</label>
-                        </div>
-                        <div className="field-radiobutton col-6">
-                            <RadioButton
-                                inputId="type4"
-                                name="type"
-                                value="OTHER"
-                                checked={room.type === "OTHER"}
-                                onChange={onTypeChange}
-                            />
-                            <label htmlFor="type4">Lainnya</label>
-                        </div>
-                    </div>
-                </div>
-                <div className="field">
-                    <label htmlFor="floor" className="font-bold">
-                        Lantai
-                    </label>
-                    <Dropdown
-                        id="floor"
-                        value={room.floor}
-                        onChange={onFloorChange}
-                        options={dropdownFloorValues}
-                        optionValue="value"
-                        optionLabel="name"
-                        placeholder="Pilih lantai"
-                    />
-                </div>
-            </Dialog>
 
             {/* Delete room dialog */}
             <Dialog

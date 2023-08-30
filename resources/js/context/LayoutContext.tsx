@@ -50,19 +50,19 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         }
     };
 
+    const showProfileSidebar = () => {
+        setLayoutState((prevLayoutState) => ({
+            ...prevLayoutState,
+            profileSidebarVisible: !prevLayoutState.profileSidebarVisible,
+        }));
+    };
+
     const isOverlay = () => {
         return layoutConfig.menuMode === "overlay";
     };
 
     const isDesktop = () => {
         return window.innerWidth > 991;
-    };
-
-    const showProfileSidebar = () => {
-        setLayoutState((prevLayoutState) => ({
-            ...prevLayoutState,
-            profileSidebarVisible: !prevLayoutState.profileSidebarVisible,
-        }));
     };
 
     const value: LayoutContextProps = {

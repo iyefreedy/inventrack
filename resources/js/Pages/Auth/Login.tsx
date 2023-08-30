@@ -7,6 +7,7 @@ import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import SimpleLayout from "@/Layouts/SimpleLayout";
+import InputError from "@/Components/InputError";
 
 export default function Login({
     status,
@@ -82,13 +83,17 @@ export default function Login({
                                         id="email1"
                                         type="email"
                                         placeholder="Email address"
-                                        className="w-full md:w-30rem mb-5"
+                                        className="w-full md:w-30rem"
                                         style={{ padding: "1rem" }}
                                         value={data.email}
                                         onChange={(e) =>
                                             setData("email", e.target.value)
                                         }
                                     />
+
+                                    {errors.email ? (
+                                        <InputError message={errors.email} />
+                                    ) : null}
 
                                     <label
                                         htmlFor="password"
@@ -107,6 +112,9 @@ export default function Login({
                                         className="w-full mb-5"
                                         inputClassName="w-full p-3 md:w-30rem"
                                     ></Password>
+                                    {errors.password ? (
+                                        <InputError message={errors.password} />
+                                    ) : null}
 
                                     <div className="flex align-items-center justify-content-between mb-5 gap-5">
                                         <div className="flex align-items-center">
