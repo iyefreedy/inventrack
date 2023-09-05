@@ -1,18 +1,22 @@
 import DefaultLayout from "@/Layouts/DefaultLayout";
-import { Computer, PageProps } from "@/types";
-import { Head, Link } from "@inertiajs/react";
+import { Accessory, Computer, PageProps } from "@/types";
+import { Dialog } from "primereact/dialog";
+import { Head, Link, router } from "@inertiajs/react";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
+
 import {
     DataTable,
     DataTableExpandedRows,
     DataTableValueArray,
 } from "primereact/datatable";
 import { Message } from "primereact/message";
+import { Rating } from "primereact/rating";
 import { Toolbar } from "primereact/toolbar";
 import React from "react";
 import { useEffect, useRef, useState } from "react";
 import { RouteParam } from "ziggy-js";
+import { Toast } from "primereact/toast";
 
 type ComputerIndexPageProps = {
     data: Computer[];
@@ -20,15 +24,55 @@ type ComputerIndexPageProps = {
 
 const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
     const [computers, setComputers] = useState<Computer[]>([]);
+    const [computer, setComputer] = useState<Computer | null>(null);
     const [expandedRows, setExpandedRows] = useState<
         DataTableExpandedRows | DataTableValueArray | undefined
     >(undefined);
 
     const dt = useRef<DataTable<Computer[]>>(null);
+    const toast = useRef<Toast>(null);
 
     useEffect(() => {
         setComputers([...data]);
     }, []);
+
+    const confirmDeleteComputer = (computer: Computer | null) => {
+        setComputer(computer);
+    };
+
+    const hideDeleteComputerDialog = () => {
+        setComputer(null);
+    };
+
+    const deleteComputer = async () => {
+        const _computer = { ...computer };
+        const request = await window.axios.delete(
+            route("computers.destroy", _computer as unknown as RouteParam)
+        );
+
+        const response = request.data;
+        if (response.status) {
+            let _computers = computers.filter((val) => val.id !== _computer.id);
+
+            toast.current?.show({
+                severity: "success",
+                summary: "Successful",
+                detail: response.message,
+                life: 3000,
+            });
+
+            setComputers([..._computers]);
+        } else {
+            toast.current?.show({
+                severity: "error",
+                summary: "Failed",
+                detail: response.message,
+                life: 3000,
+            });
+        }
+
+        setComputer(null);
+    };
 
     const allowExpansion = (rowData: Computer) => {
         return rowData.accessories!.length > 0;
@@ -40,9 +84,29 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
                 <Link href={route("computers.create")}>
                     <Button label="New" icon="pi pi-plus" severity="success" />
                 </Link>
-                <Button label="Delete" icon="pi pi-trash" severity="danger" />
             </div>
         );
+    };
+
+    const accessoryTypeBodyTemplate = (rowData: Accessory) => {
+        switch (rowData.type) {
+            case "COMMUNICATION":
+                return "Communcation Device";
+            case "INPUT":
+                return "Input Device";
+            case "NETWORKING":
+                return "Networking Device";
+            case "OUTPUT":
+                return "Output Device";
+            case "STORAGE":
+                return "Storage Device";
+            case "OTHER":
+                return "Other";
+        }
+    };
+
+    const accessoryConditionBodyTemplate = (rowData: Accessory) => {
+        return <Rating value={rowData.condition} cancel={false} />;
     };
 
     const rightToolbarTemplate = () => {
@@ -65,7 +129,17 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
                     </h5>
                     <DataTable value={data.accessories}>
                         <Column field="name" header="Nama" sortable />
-                        <Column field="type" header="Jenis" sortable />
+                        <Column
+                            field="type"
+                            header="Jenis"
+                            sortable
+                            body={accessoryTypeBodyTemplate}
+                        />
+                        <Column
+                            field="condition"
+                            header="Condition"
+                            body={accessoryConditionBodyTemplate}
+                        />
                     </DataTable>
                 </div>
                 <div className="p-2 ml-8">
@@ -95,7 +169,13 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
                     />
                 </Link>
 
-                <Button icon="pi pi-trash" rounded outlined severity="danger" />
+                <Button
+                    icon="pi pi-trash"
+                    rounded
+                    outlined
+                    severity="danger"
+                    onClick={() => confirmDeleteComputer(rowData)}
+                />
             </React.Fragment>
         );
     };
@@ -129,11 +209,25 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
         }
     };
 
-    const header = (
-        <div className="flex flex-wrap justify-content-end gap-2">
-            <Button icon="pi pi-plus" label="Expand All" text />
-            <Button icon="pi pi-minus" label="Collapse All" text />
-        </div>
+    const conditionBodyTemplate = (rowData: Computer) => {
+        return <Rating value={rowData.condition} cancel={false} />;
+    };
+
+    const deleteComputerdialogFooter = (
+        <React.Fragment>
+            <Button
+                label="No"
+                icon="pi pi-times"
+                outlined
+                onClick={hideDeleteComputerDialog}
+            />
+            <Button
+                label="Yes"
+                icon="pi pi-check"
+                severity="danger"
+                onClick={deleteComputer}
+            />
+        </React.Fragment>
     );
 
     return (
@@ -142,6 +236,7 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
             <div className="grid">
                 <div className="col-12">
                     <div className="card">
+                        <Toast ref={toast} />
                         <Toolbar
                             start={leftToolbarTemplate}
                             end={rightToolbarTemplate}
@@ -161,7 +256,6 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
 
                         <DataTable
                             ref={dt}
-                            header={header}
                             dataKey="id"
                             value={computers}
                             expandedRows={expandedRows}
@@ -182,8 +276,40 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
                                 header="Operating System"
                                 body={operatingSystemBodyTemplate}
                             />
-                            <Column body={actionBodyTemplate} />
+                            <Column
+                                field="condition"
+                                header="Condition"
+                                body={conditionBodyTemplate}
+                            />
+                            <Column
+                                body={actionBodyTemplate}
+                                style={{ minWidth: "12rem" }}
+                            />
                         </DataTable>
+
+                        {/* Delete computer dialog */}
+                        <Dialog
+                            visible={computer !== null}
+                            style={{ width: "32rem" }}
+                            breakpoints={{ "960px": "75vw", "641px": "90vw" }}
+                            header="Confirm"
+                            modal
+                            footer={deleteComputerdialogFooter}
+                            onHide={hideDeleteComputerDialog}
+                        >
+                            <div className="confirmation-content">
+                                <i
+                                    className="pi pi-exclamation-triangle mr-3"
+                                    style={{ fontSize: "2rem" }}
+                                />
+                                {computer && (
+                                    <span>
+                                        Apakah anda yakin ingin menghapus{" "}
+                                        <b>{computer.name}</b>?
+                                    </span>
+                                )}
+                            </div>
+                        </Dialog>
                     </div>
                 </div>
             </div>

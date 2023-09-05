@@ -3,6 +3,7 @@
 use App\Http\Controllers\ComputerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoomController;
+use App\Utilities\Hasher;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -50,6 +51,10 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('computers', ComputerController::class);
     Route::resource('rooms', RoomController::class)->except(['show']);
+});
+
+Route::bind('id', function ($id) {
+    return Hasher::decode($id);
 });
 
 require __DIR__ . '/auth.php';

@@ -1,4 +1,3 @@
-import InputError from "@/Components/InputError";
 import DefaultLayout from "@/Layouts/DefaultLayout";
 import {
     Accessory,
@@ -15,29 +14,20 @@ import { Checkbox } from "primereact/checkbox";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
-import { Message } from "primereact/message";
 import { Rating, RatingChangeEvent } from "primereact/rating";
 import { FormEventHandler, useEffect, useState } from "react";
 
-const Create = ({ auth, flash }: PageProps) => {
+const Edit = ({
+    auth,
+    computer,
+}: PageProps & {
+    computer: Computer;
+}) => {
     const [rooms, setRooms] = useState<Room[]>([]);
-    const { data, setData, processing, post, errors } = useForm<Computer>({
-        name: "",
-        condition: 0,
-        processor: "",
-        ram: "",
-        room_id: undefined,
-        user: "",
-        storage: "",
-        workgroup: "",
-        motherboard: "",
-        case: "",
-        operating_system: undefined,
-        operating_system_activation: false,
-        power_supply: "",
-        accessories: [],
-        softwares: [],
+    const { data, setData, processing, patch } = useForm<Computer>({
+        ...computer,
     });
+
     const [accessories, setAccessories] = useState<Accessory[]>([
         ...data.accessories,
     ]);
@@ -140,7 +130,7 @@ const Create = ({ auth, flash }: PageProps) => {
     const onSubmit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        post(route("computers.store"));
+        patch(route("computers.update"));
     };
 
     const onChangeConditionRating = (e: RatingChangeEvent) => {
@@ -275,27 +265,13 @@ const Create = ({ auth, flash }: PageProps) => {
 
     return (
         <DefaultLayout user={auth.user}>
-            <Head title="Add Computer" />
+            <Head title="Edit Computer" />
             <div className="grid">
                 <div className="col-12">
                     <div className="card">
                         <form onSubmit={onSubmit}>
                             <h5>Detail Komputer</h5>
                             <div className="p-fluid formgrid grid">
-                                <div className="col-12">
-                                    {flash.message ? (
-                                        <Message
-                                            severity="success"
-                                            text={flash.message}
-                                        />
-                                    ) : null}
-                                    {flash.error ? (
-                                        <Message
-                                            severity="error"
-                                            text={flash.error}
-                                        />
-                                    ) : null}
-                                </div>
                                 <div className="field col-12 md:col-3">
                                     <label htmlFor="name">Nama Komputer</label>
                                     <InputText
@@ -309,13 +285,6 @@ const Create = ({ auth, flash }: PageProps) => {
                                         }
                                         autoFocus
                                     />
-
-                                    {errors.name ? (
-                                        <InputError
-                                            message={errors.name}
-                                            className="text-red-500"
-                                        />
-                                    ) : null}
                                 </div>
                                 <div className="field col-12 md:col-3">
                                     <label htmlFor="roomId">Ruang</label>
@@ -683,4 +652,4 @@ const Create = ({ auth, flash }: PageProps) => {
     );
 };
 
-export default Create;
+export default Edit;

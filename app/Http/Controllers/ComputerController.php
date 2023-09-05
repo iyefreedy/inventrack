@@ -45,10 +45,6 @@ class ComputerController extends Controller
             $accessories = $data['accessories'];
             $softwares = $data['softwares'];
 
-            // foreach ($accessories as &$accessory) {
-            //     $accessory->computer_id = $computer->id;
-            // }
-
             foreach ($accessories as $accessory) {
                 Accessory::create([
                     'name' => $accessory['name'],
@@ -83,6 +79,7 @@ class ComputerController extends Controller
     public function show(Computer $computer)
     {
         //
+
     }
 
     /**
@@ -90,7 +87,9 @@ class ComputerController extends Controller
      */
     public function edit(Computer $computer)
     {
-        //
+        return Inertia::render('Computer/Edit', [
+            'computer' => $computer->with(['room', 'accessories', 'softwares'])->find($computer->id)
+        ]);
     }
 
     /**
@@ -106,6 +105,37 @@ class ComputerController extends Controller
      */
     public function destroy(Computer $computer)
     {
-        //
+        DB::beginTransaction();
+
+
+
+        try {
+            Accessory::where('computer_id', $computer->id)->delete();
+            Software::where('computer_id', $computer->id)->delete();
+            $computer->delete();
+
+            DB::commit();
+
+            if (!request()->inertia() && request()->expectsJson()) {
+                return response()->json([
+                    'message' => 'Data ruangan berhasil dihapus',
+                    'status' => true,
+                    'data' => $computer
+                ]);
+            }
+
+            return Redirect::route('computers.index')->with('message', 'Berhasil menghapus data');
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollBack();
+            if (!request()->inertia() && request()->expectsJson()) {
+                return response()->json([
+                    'message' => $th->getMessage(),
+                    'status' => false,
+                    'data' => $computer
+                ]);
+            }
+            return Redirect::back()->with('error', 'Terjadi kesalahan pada sisi server.');
+        }
     }
 }
