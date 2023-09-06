@@ -640,6 +640,8 @@ const Create = ({ auth, flash }: PageProps) => {
                                                 }
                                             />
                                         </div>
+
+                                        <ConfirmPopup />
                                     </div>
                                 ))}
 

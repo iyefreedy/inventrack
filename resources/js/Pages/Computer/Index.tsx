@@ -124,28 +124,38 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
         return (
             <React.Fragment>
                 <div className="p-2 ml-8">
-                    <h5 className="text-sm">
-                        Aksesoris/Device Tambahan {data.name}
-                    </h5>
+                    <h5 className="text-sm">{data.name} Additional Devices</h5>
                     <DataTable value={data.accessories}>
-                        <Column field="name" header="Nama" sortable />
+                        <Column
+                            field="name"
+                            header="Nama"
+                            bodyStyle={{ padding: "0.5rem 0.5rem" }}
+                            sortable
+                        />
                         <Column
                             field="type"
                             header="Jenis"
+                            bodyStyle={{ padding: "0.5rem 0.5rem" }}
                             sortable
                             body={accessoryTypeBodyTemplate}
                         />
                         <Column
                             field="condition"
                             header="Condition"
+                            bodyStyle={{ padding: "0.5rem 0.5rem" }}
                             body={accessoryConditionBodyTemplate}
                         />
                     </DataTable>
                 </div>
                 <div className="p-2 ml-8">
-                    <h5 className="text-sm">Software Terinstall {data.name}</h5>
+                    <h5 className="text-sm">{data.name} Installed Software</h5>
                     <DataTable value={data.softwares}>
-                        <Column field="name" header="Nama" sortable />
+                        <Column
+                            field="name"
+                            header="Nama"
+                            bodyStyle={{ padding: "0.5rem 0.5rem" }}
+                            sortable
+                        />
                     </DataTable>
                 </div>
             </React.Fragment>
@@ -155,6 +165,14 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
     const actionBodyTemplate = (rowData: Computer) => {
         return (
             <React.Fragment>
+                <Button
+                    icon="pi pi-eye"
+                    rounded
+                    outlined
+                    severity="info"
+                    className="mr-2"
+                    onClick={() => confirmDeleteComputer(rowData)}
+                />
                 <Link
                     href={route(
                         "computers.edit",
@@ -267,10 +285,8 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
                                 expander={allowExpansion}
                                 style={{ width: "4rem" }}
                             />
-                            <Column field="name" header="Nama PC" sortable />
-                            <Column field="room.code" header="Ruang" />
-                            <Column field="processor" header="Processor" />
-                            <Column field="ram" header="RAM" />
+                            <Column field="name" header="PC Name" sortable />
+                            <Column field="room.code" header="Room" />
                             <Column
                                 field="operating_system"
                                 header="Operating System"

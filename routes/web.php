@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ComputerController;
+use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoomController;
 use App\Utilities\Hasher;
@@ -51,10 +52,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('computers', ComputerController::class);
     Route::resource('rooms', RoomController::class)->except(['show']);
-});
-
-Route::bind('id', function ($id) {
-    return Hasher::decode($id);
+    Route::resource('maintenances', MaintenanceController::class);
 });
 
 require __DIR__ . '/auth.php';
