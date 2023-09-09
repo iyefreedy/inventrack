@@ -27,6 +27,8 @@
     "dependencies": {
         "@fullcalendar/core": "^6.1.8",
         "chart.js": "^4.3.3",
+        "jspdf": "^2.5.1",
+        "jspdf-autotable": "^3.6.0",
         "primeflex": "^3.3.1",
         "primeicons": "^6.0.1",
         "primereact": "^9.6.2"
