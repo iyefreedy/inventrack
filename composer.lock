@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bc1a7ca9374b2d85a883d6deff86ee49",
+    "content-hash": "c8121354b79038a8e6b641f1e6235ceb",
     "packages": [
         {
             "name": "brick/math",
@@ -502,6 +502,60 @@
                 }
             ],
             "time": "2022-02-20T15:07:15+00:00"
+        },
+        {
+            "name": "fusionauth/fusionauth-client",
+            "version": "1.47.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/FusionAuth/fusionauth-php-client.git",
+                "reference": "b31bcba95c73e552dc6369a9b3b7d791ff7ca5e3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/FusionAuth/fusionauth-php-client/zipball/b31bcba95c73e552dc6369a9b3b7d791ff7ca5e3",
+                "reference": "b31bcba95c73e552dc6369a9b3b7d791ff7ca5e3",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "9.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FusionAuth\\": "src/FusionAuth/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Daniel DeGroff",
+                    "email": "daniel@fuaionauth.io"
+                },
+                {
+                    "name": "Brian Pontarelli",
+                    "email": "brian@fusionauth.io"
+                }
+            ],
+            "description": "FusionAuth Client written in PHP",
+            "homepage": "https://github.com/FusionAuth/fusionauth-php-client",
+            "keywords": [
+                "api",
+                "fusionauth",
+                "rest"
+            ],
+            "support": {
+                "issues": "https://github.com/FusionAuth/fusionauth-php-client/issues",
+                "source": "https://github.com/FusionAuth/fusionauth-php-client/tree/1.47.1"
+            },
+            "time": "2023-07-27T21:54:56+00:00"
         },
         {
             "name": "graham-campbell/result-type",

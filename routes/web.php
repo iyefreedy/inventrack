@@ -33,6 +33,7 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
 /**
  * Dashboard route without middleware
  * For testing purpose only

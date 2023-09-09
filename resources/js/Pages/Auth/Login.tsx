@@ -97,21 +97,20 @@ export default function Login({
 
                                     <label
                                         htmlFor="password"
-                                        className="block text-900 font-medium text-xl mb-2"
+                                        className="block text-900 font-medium text-xl mt-3 mb-2"
                                     >
                                         Password
                                     </label>
-                                    <Password
-                                        inputId="password"
+                                    <InputText
+                                        id="Password"
+                                        type="password"
                                         value={data.password}
                                         onChange={(e) =>
                                             setData("password", e.target.value)
                                         }
                                         placeholder="Password"
-                                        toggleMask
                                         className="w-full mb-5"
-                                        inputClassName="w-full p-3 md:w-30rem"
-                                    ></Password>
+                                    ></InputText>
                                     {errors.password ? (
                                         <InputError message={errors.password} />
                                     ) : null}
