@@ -18,8 +18,8 @@ const Edit = ({
 }) => {
     const { data, setData, patch, errors, processing } = useForm<Room>({
         id: room.id,
-        code: room.code ?? "",
-        name: room.name ?? "",
+        code: room.code,
+        name: room.name,
         type: room.type,
         floor: room.floor,
     });

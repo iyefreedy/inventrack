@@ -39,7 +39,6 @@ const Index = ({ rooms, auth, flash }: PageProps & RoomIndexPageProps) => {
     ];
 
     let emptyRoom: Room = {
-        id: null,
         code: "",
         name: "",
         floor: undefined,

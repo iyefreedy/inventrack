@@ -29,10 +29,10 @@ const Edit = ({
     });
 
     const [accessories, setAccessories] = useState<Accessory[]>([
-        ...data.accessories,
+        ...(data.accessories ?? []),
     ]);
     const [softwares, setSoftwares] = useState<Software[]>([
-        ...data.accessories,
+        ...(data.softwares ?? []),
     ]);
 
     const operatingSystemDropdownValues = [
@@ -440,7 +440,8 @@ const Edit = ({
                                                 )
                                             }
                                             checked={
-                                                data.operating_system_activation
+                                                data.operating_system_activation ??
+                                                false
                                             }
                                         ></Checkbox>
                                         <label

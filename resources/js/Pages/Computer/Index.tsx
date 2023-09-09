@@ -17,6 +17,7 @@ import React from "react";
 import { useEffect, useRef, useState } from "react";
 import { RouteParam } from "ziggy-js";
 import { Toast } from "primereact/toast";
+import { autoTable } from "jspdf-autotable";
 
 type ComputerIndexPageProps = {
     data: Computer[];
@@ -25,12 +26,24 @@ type ComputerIndexPageProps = {
 const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
     const [computers, setComputers] = useState<Computer[]>([]);
     const [computer, setComputer] = useState<Computer | null>(null);
+
     const [expandedRows, setExpandedRows] = useState<
         DataTableExpandedRows | DataTableValueArray | undefined
     >(undefined);
 
     const dt = useRef<DataTable<Computer[]>>(null);
     const toast = useRef<Toast>(null);
+
+    const cols = [
+        { field: "name", header: "Name" },
+        { field: "room", header: "Room" },
+        { field: "operating_system", header: "Operating System" },
+    ];
+
+    const exportColumns = cols.map((col) => ({
+        title: col.header,
+        dataKey: col.field,
+    }));
 
     useEffect(() => {
         setComputers([...data]);
@@ -78,6 +91,36 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
         return rowData.accessories!.length > 0;
     };
 
+    const exportPdf = () => {
+        import("jspdf").then((jsPDF) => {
+            import("jspdf-autotable").then(() => {
+                const doc = new jsPDF.default("l", "cm");
+
+                // autoTable(doc, {
+                //     head: [["PC-Name", "Room", "Operating system"]],
+                //     body: computers.map((computer) => {
+                //         const { name, room, operating_system } = computer;
+
+                //         return Object.values({
+                //             name: name,
+                //             room: room.code,
+                //             operating_system: operating_system,
+                //         });
+                //     }),
+                // });
+
+                // doc.autoTable(exportColumns, computers, {
+                //     didParseCell: function (data: CellHookData) {
+                //         if (data.column.dataKey === "room") {
+                //             data.cell.text = data.cell.raw.code;
+                //         }
+                //     },
+                // }) as autoTable;
+                doc.save("products.pdf");
+            });
+        });
+    };
+
     const leftToolbarTemplate = () => {
         return (
             <div className="flex flex-wrap gap-2">
@@ -115,7 +158,7 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
                 label="Export"
                 icon="pi pi-upload"
                 className="p-button-help"
-                onClick={(e) => dt.current?.exportCSV()}
+                onClick={exportPdf}
             />
         );
     };
@@ -302,6 +345,10 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
                                 style={{ minWidth: "12rem" }}
                             />
                         </DataTable>
+
+                        {/** Show computer dialog */}
+
+                        {/** End of show computer dialog */}
 
                         {/* Delete computer dialog */}
                         <Dialog

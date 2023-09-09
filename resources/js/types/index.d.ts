@@ -25,11 +25,11 @@ export type InputValue = {
 export type RoomType = "CLASSROOM" | "STAFF_ROOM" | "LAB" | "OTHER";
 
 export interface Room {
-    id?: bigint | null;
-    code: string;
-    name: string;
-    type: RoomType | undefined;
-    floor: string | undefined;
+    id?: bigint;
+    code?: string;
+    name?: string;
+    type?: RoomType;
+    floor?: string;
 }
 
 export type AccessoryType =
@@ -55,32 +55,32 @@ export type OperatingSystem =
     | "CATALINA";
 
 export interface Computer {
-    id?: bigint | null;
-    room_id: bigint | undefined;
-    user: string;
-    name: string;
-    workgroup: string;
-    processor: string;
-    ram: string;
-    storage: string;
-    motherboard: string;
-    power_supply: string;
-    condition: number;
-    operating_system: OperatingSystem | undefined;
-    operating_system_activation: boolean;
-    accessories: Accessory[];
-    case: string;
-    softwares: Software[];
+    id?: bigint;
+    room_id?: bigint;
+    user?: string;
+    name?: string;
+    workgroup?: string;
+    processor?: string;
+    ram?: string;
+    storage?: string;
+    motherboard?: string;
+    power_supply?: string;
+    condition?: number;
+    operating_system?: OperatingSystem;
+    operating_system_activation?: boolean;
+    case?: string;
+    accessories?: Accessory[];
+    softwares?: Software[];
 }
 
 export interface Accessory {
-    id?: bigint | null;
-    name: string;
-    type: AccessoryType | undefined;
-    condition: number;
+    id?: bigint;
+    name?: string;
+    type?: AccessoryType;
+    condition?: number;
 }
 
 export interface Software {
-    id?: bigint | null;
-    name: string;
+    id?: bigint;
+    name?: string;
 }

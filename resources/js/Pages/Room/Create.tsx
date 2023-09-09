@@ -10,12 +10,7 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { FormEventHandler } from "react";
 
 const Create = ({ auth }: PageProps) => {
-    const { data, setData, errors, post, processing } = useForm<Room>({
-        code: "",
-        name: "",
-        floor: undefined,
-        type: undefined,
-    });
+    const { data, setData, errors, post, processing } = useForm<Room>();
 
     const dropdownFloorValues: InputValue[] = [
         { name: "Lantai B2", value: "B2" },

@@ -21,28 +21,12 @@ import { FormEventHandler, useEffect, useState } from "react";
 
 const Create = ({ auth, flash }: PageProps) => {
     const [rooms, setRooms] = useState<Room[]>([]);
-    const { data, setData, processing, post, errors } = useForm<Computer>({
-        name: "",
-        condition: 0,
-        processor: "",
-        ram: "",
-        room_id: undefined,
-        user: "",
-        storage: "",
-        workgroup: "",
-        motherboard: "",
-        case: "",
-        operating_system: undefined,
-        operating_system_activation: false,
-        power_supply: "",
-        accessories: [],
-        softwares: [],
-    });
+    const { data, setData, processing, post, errors } = useForm<Computer>();
     const [accessories, setAccessories] = useState<Accessory[]>([
-        ...data.accessories,
+        ...(data.accessories ?? []),
     ]);
     const [softwares, setSoftwares] = useState<Software[]>([
-        ...data.accessories,
+        ...(data.softwares ?? []),
     ]);
 
     const operatingSystemDropdownValues = [
@@ -471,7 +455,8 @@ const Create = ({ auth, flash }: PageProps) => {
                                                 )
                                             }
                                             checked={
-                                                data.operating_system_activation
+                                                data.operating_system_activation ??
+                                                false
                                             }
                                         ></Checkbox>
                                         <label
