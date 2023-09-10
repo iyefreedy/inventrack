@@ -17,7 +17,6 @@ import React from "react";
 import { useEffect, useRef, useState } from "react";
 import { RouteParam } from "ziggy-js";
 import { Toast } from "primereact/toast";
-import { autoTable } from "jspdf-autotable";
 
 type ComputerIndexPageProps = {
     data: Computer[];
@@ -25,7 +24,12 @@ type ComputerIndexPageProps = {
 
 const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
     const [computers, setComputers] = useState<Computer[]>([]);
-    const [computer, setComputer] = useState<Computer | null>(null);
+    const [computer, setComputer] = useState<Computer>();
+
+    const [deleteComputerDialog, setDeleteComputerDialog] =
+        useState<boolean>(false);
+    const [showComputerDialog, setShowComputerDialog] =
+        useState<boolean>(false);
 
     const [expandedRows, setExpandedRows] = useState<
         DataTableExpandedRows | DataTableValueArray | undefined
@@ -34,27 +38,27 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
     const dt = useRef<DataTable<Computer[]>>(null);
     const toast = useRef<Toast>(null);
 
-    const cols = [
-        { field: "name", header: "Name" },
-        { field: "room", header: "Room" },
-        { field: "operating_system", header: "Operating System" },
-    ];
-
-    const exportColumns = cols.map((col) => ({
-        title: col.header,
-        dataKey: col.field,
-    }));
-
     useEffect(() => {
         setComputers([...data]);
     }, []);
 
-    const confirmDeleteComputer = (computer: Computer | null) => {
+    const confirmDeleteComputer = (computer: Computer) => {
+        setDeleteComputerDialog(true);
         setComputer(computer);
     };
 
     const hideDeleteComputerDialog = () => {
-        setComputer(null);
+        setDeleteComputerDialog(false);
+        setComputer({});
+    };
+
+    const showComputer = (computer: Computer) => {
+        setShowComputerDialog(true);
+        setComputer(computer);
+    };
+    const closeShowComputer = () => {
+        setShowComputerDialog(false);
+        setComputer({});
     };
 
     const deleteComputer = async () => {
@@ -84,38 +88,23 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
             });
         }
 
-        setComputer(null);
+        setComputer({});
     };
 
     const allowExpansion = (rowData: Computer) => {
-        return rowData.accessories!.length > 0;
+        return (
+            ((rowData.accessories?.length != null &&
+                rowData.accessories?.length > 0) ||
+                (rowData.softwares?.length != null &&
+                    rowData.softwares?.length > 0)) ??
+            false
+        );
     };
 
     const exportPdf = () => {
         import("jspdf").then((jsPDF) => {
             import("jspdf-autotable").then(() => {
                 const doc = new jsPDF.default("l", "cm");
-
-                // autoTable(doc, {
-                //     head: [["PC-Name", "Room", "Operating system"]],
-                //     body: computers.map((computer) => {
-                //         const { name, room, operating_system } = computer;
-
-                //         return Object.values({
-                //             name: name,
-                //             room: room.code,
-                //             operating_system: operating_system,
-                //         });
-                //     }),
-                // });
-
-                // doc.autoTable(exportColumns, computers, {
-                //     didParseCell: function (data: CellHookData) {
-                //         if (data.column.dataKey === "room") {
-                //             data.cell.text = data.cell.raw.code;
-                //         }
-                //     },
-                // }) as autoTable;
                 doc.save("products.pdf");
             });
         });
@@ -214,7 +203,7 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
                     outlined
                     severity="info"
                     className="mr-2"
-                    onClick={() => confirmDeleteComputer(rowData)}
+                    onClick={() => showComputer(rowData)}
                 />
                 <Link
                     href={route(
@@ -347,12 +336,52 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
                         </DataTable>
 
                         {/** Show computer dialog */}
-
+                        <Dialog
+                            visible={showComputerDialog}
+                            position="top"
+                            maximizable
+                            style={{ width: "32rem" }}
+                            breakpoints={{ "960px": "75vw", "641px": "90vw" }}
+                            header="Computer Detail"
+                            modal
+                            onHide={closeShowComputer}
+                        >
+                            <div className="flex flex-col p-1">
+                                <div className="col mb-2">
+                                    <h6 className="font-bold">PC-Name</h6>
+                                    <p>{computer?.name}</p>
+                                </div>
+                                <div className="col mb-2">
+                                    <h6 className="font-bold">PC User</h6>
+                                    <p>{computer?.user}</p>
+                                </div>
+                                <div className="col mb-2">
+                                    <h6 className="font-bold">PC Group</h6>
+                                    <p>{computer?.workgroup}</p>
+                                </div>
+                                <div className="col mb-2">
+                                    <h6 className="font-bold">
+                                        Operating System
+                                    </h6>
+                                    <p>
+                                        {`${
+                                            (computer?.operating_system
+                                                ?.charAt(0)
+                                                .toUpperCase() ?? "") +
+                                            computer?.operating_system
+                                                ?.slice(1)
+                                                .toLowerCase()
+                                                .replace("_", " ")
+                                        }`}
+                                    </p>
+                                </div>
+                            </div>
+                        </Dialog>
                         {/** End of show computer dialog */}
 
                         {/* Delete computer dialog */}
                         <Dialog
-                            visible={computer !== null}
+                            visible={deleteComputerDialog}
                             style={{ width: "32rem" }}
                             breakpoints={{ "960px": "75vw", "641px": "90vw" }}
                             header="Confirm"
