@@ -11,8 +11,10 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $computers = Computer::with(['room'])->get()->groupBy('room.floor');
+        $computers = Computer::with(['room'])->get();
+        $pie = $computers->groupBy('room.floor');
+        $bar = $computers->only(['condition']);
 
-        return Inertia::render('Dashboard', ['data' => $computers]);
+        return Inertia::render('Dashboard', ['pie' => $pie, 'bar' => $bar]);
     }
 }
