@@ -30,5 +30,12 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+    'fusionauth' => [
+        'client_id' => env('FUSIONAUTH_CLIENT_ID'),
+        'client_secret' => env('FUSIONAUTH_CLIENT_SECRET'),
+        'redirect' => env('FUSIONAUTH_REDIRECT_URI'),
+        'base_url' => env('FUSIONAUTH_BASE_URL'),
+        'tenant_id' => env('FUSIONAUTH_TENANT_ID'),
+    ],
 
 ];

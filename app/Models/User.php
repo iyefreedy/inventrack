@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'fusionauth_id',            // Add this column here
+        'fusionauth_access_token',  // Add this column here
+        'fusionauth_refresh_token', // Add this column here
     ];
 
     /**
@@ -31,6 +34,9 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'fusionauth_id',            // Add this column here
+        'fusionauth_access_token',  // Add this column here
+        'fusionauth_refresh_token', // Add this column here
     ];
 
     /**
