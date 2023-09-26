@@ -309,6 +309,9 @@ const Create = ({ auth, flash }: PageProps) => {
                                         onChange={(e) =>
                                             setData("room_id", e.value)
                                         }
+                                        filter
+                                        filterMatchMode="contains"
+                                        filterBy="code,name"
                                         itemTemplate={roomDropdownItemTemplate}
                                         options={rooms}
                                         optionLabel="name"
