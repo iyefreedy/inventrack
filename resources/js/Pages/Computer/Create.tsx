@@ -19,7 +19,11 @@ import { Message } from "primereact/message";
 import { Rating, RatingChangeEvent } from "primereact/rating";
 import { FormEventHandler, useEffect, useState } from "react";
 
-const Create = ({ auth, flash }: PageProps) => {
+const Create = ({
+    auth,
+    flash,
+    computer,
+}: PageProps & { computer: Computer | undefined }) => {
     const [rooms, setRooms] = useState<Room[]>([]);
     const { data, setData, processing, post, errors } = useForm<Computer>();
     const [accessories, setAccessories] = useState<Accessory[]>([
@@ -118,6 +122,12 @@ const Create = ({ auth, flash }: PageProps) => {
         window.axios
             .get(route("rooms.index"))
             .then((response) => setRooms(response.data.data));
+
+        console.log(computer !== undefined);
+
+        computer !== undefined && setData({ ...computer });
+        setAccessories([...(data.accessories ?? [])]);
+        setSoftwares([...(data.softwares ?? [])]);
     }, []);
 
     // Event functions
@@ -378,6 +388,7 @@ const Create = ({ auth, flash }: PageProps) => {
                                         id="storage"
                                         type="text"
                                         placeholder="E.g: 256GB"
+                                        value={data.storage}
                                         onChange={(e) =>
                                             setData("storage", e.target.value)
                                         }
@@ -391,6 +402,7 @@ const Create = ({ auth, flash }: PageProps) => {
                                         id="motherboard"
                                         type="text"
                                         placeholder="E.g: Mobo"
+                                        value={data.motherboard}
                                         onChange={(e) =>
                                             setData(
                                                 "motherboard",
@@ -407,6 +419,7 @@ const Create = ({ auth, flash }: PageProps) => {
                                         id="powerSupply"
                                         type="text"
                                         placeholder="E.g: PSU-123"
+                                        value={data.motherboard}
                                         onChange={(e) =>
                                             setData(
                                                 "power_supply",
@@ -421,6 +434,7 @@ const Create = ({ auth, flash }: PageProps) => {
                                         id="case"
                                         type="text"
                                         placeholder="E.g: Case 129-RTX"
+                                        value={data.case}
                                         onChange={(e) =>
                                             setData("case", e.target.value)
                                         }

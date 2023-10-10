@@ -16,17 +16,20 @@ import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { Rating, RatingChangeEvent } from "primereact/rating";
 import { FormEventHandler, useEffect, useState } from "react";
+import { RouteParam } from "ziggy-js";
 
 const Edit = ({
     auth,
+    flash,
     computer,
 }: PageProps & {
     computer: Computer;
 }) => {
     const [rooms, setRooms] = useState<Room[]>([]);
-    const { data, setData, processing, patch } = useForm<Computer>({
-        ...computer,
-    });
+    const { data, setData, processing, patch, hasErrors, errors } =
+        useForm<Computer>({
+            ...computer,
+        });
 
     const [accessories, setAccessories] = useState<Accessory[]>([
         ...(data.accessories ?? []),
@@ -121,6 +124,12 @@ const Edit = ({
     ];
 
     useEffect(() => {
+        setAccessories((previousValue) => {
+            return data.accessories ?? [];
+        });
+        setSoftwares(() => {
+            return data.softwares ?? [];
+        });
         window.axios
             .get(route("rooms.index"))
             .then((response) => setRooms(response.data.data));
@@ -130,7 +139,7 @@ const Edit = ({
     const onSubmit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        patch(route("computers.update"));
+        patch(route("computers.update", data as unknown as RouteParam));
     };
 
     const onChangeConditionRating = (e: RatingChangeEvent) => {
@@ -270,6 +279,11 @@ const Edit = ({
                 <div className="col-12">
                     <div className="card">
                         <form onSubmit={onSubmit}>
+                            {flash.error !== undefined ? (
+                                <ul>
+                                    <li>{flash.error}</li>
+                                </ul>
+                            ) : null}
                             <h5>Detail Komputer</h5>
                             <div className="p-fluid formgrid grid">
                                 <div className="field col-12 md:col-3">
@@ -360,6 +374,7 @@ const Edit = ({
                                         id="storage"
                                         type="text"
                                         placeholder="E.g: 256GB"
+                                        value={data.storage}
                                         onChange={(e) =>
                                             setData("storage", e.target.value)
                                         }
@@ -373,6 +388,7 @@ const Edit = ({
                                         id="motherboard"
                                         type="text"
                                         placeholder="E.g: Mobo"
+                                        value={data.motherboard}
                                         onChange={(e) =>
                                             setData(
                                                 "motherboard",
@@ -389,6 +405,7 @@ const Edit = ({
                                         id="powerSupply"
                                         type="text"
                                         placeholder="E.g: PSU-123"
+                                        value={data.power_supply}
                                         onChange={(e) =>
                                             setData(
                                                 "power_supply",
@@ -403,6 +420,7 @@ const Edit = ({
                                         id="case"
                                         type="text"
                                         placeholder="E.g: Case 129-RTX"
+                                        value={data.case}
                                         onChange={(e) =>
                                             setData("case", e.target.value)
                                         }

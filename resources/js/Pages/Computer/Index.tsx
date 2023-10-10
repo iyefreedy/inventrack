@@ -91,6 +91,14 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
         setComputer({});
     };
 
+    const duplicate = (id: string) => {
+        const query = new URLSearchParams({
+            from: id,
+        });
+
+        router.visit(route("computers.create") + `?${query.toString()}`);
+    };
+
     const allowExpansion = (rowData: Computer) => {
         return (
             ((rowData.accessories?.length != null &&
@@ -215,6 +223,7 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
                         icon="pi pi-pencil"
                         rounded
                         outlined
+                        severity="secondary"
                         className="mr-2"
                     />
                 </Link>
@@ -224,7 +233,15 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
                     rounded
                     outlined
                     severity="danger"
+                    className="mr-2"
                     onClick={() => confirmDeleteComputer(rowData)}
+                />
+                <Button
+                    icon="pi pi-copy"
+                    rounded
+                    outlined
+                    severity="help"
+                    onClick={() => duplicate(`${rowData.id}`)}
                 />
             </React.Fragment>
         );

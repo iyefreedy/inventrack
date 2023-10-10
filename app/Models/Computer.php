@@ -18,6 +18,7 @@ class Computer extends Model
         'processor',
         'ram',
         'storage',
+        'case',
         'motherboard',
         'operating_system',
         'operating_system_activation',
@@ -27,6 +28,11 @@ class Computer extends Model
         'deleted_at',
         'created_at',
         'updated_at'
+
+    ];
+
+    protected $casts = [
+        'operating_system_activation' => 'boolean'
     ];
 
     public function room()

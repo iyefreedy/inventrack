@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ComputerStoreRequest;
+use App\Http\Requests\ComputerUpdateRequest;
 use App\Models\Accessory;
 use App\Models\Computer;
 use App\Models\Software;
@@ -28,7 +29,13 @@ class ComputerController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Computer/Create');
+        $query = request()->query();
+
+        $computer = Computer::query()
+            ->with(['accessories', 'softwares'])
+            ->findOrFail($query['from']);
+
+        return Inertia::render('Computer/Create', ['computer' => $computer]);
     }
 
     /**
@@ -42,8 +49,8 @@ class ComputerController extends Controller
             $data = $request->validated();
             $computer = Computer::create($data);
 
-            $accessories = $data['accessories'];
-            $softwares = $data['softwares'];
+            $accessories = $data['accessories'] ?? [];
+            $softwares = $data['softwares'] ?? [];
 
             foreach ($accessories as $accessory) {
                 Accessory::create([
@@ -95,9 +102,44 @@ class ComputerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Computer $computer)
+    public function update(ComputerUpdateRequest $request, Computer $computer)
     {
-        //
+        DB::beginTransaction();
+        try {
+
+            $data = $request->validated();
+
+            $computer->update($data);
+
+            $accessories = $data['accessories'] ?? [];
+            $softwares = $data['softwares'] ?? [];
+
+            foreach ($accessories as $accessory) {
+                Accessory::create([
+                    'name' => $accessory['name'],
+                    'type' => $accessory['type'],
+                    'condition' => $accessory['condition'],
+                    'computer_id' => $computer->id,
+                ]);
+            }
+
+            foreach ($softwares as $software) {
+                Software::create([
+                    'name' => $software['name'],
+                    'computer_id' => $computer->id,
+                ]);
+            }
+            DB::commit();
+
+            return Redirect::route('computers.index')->with([
+                'message' => 'Data berhasil disimpan'
+            ]);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return Redirect::back()->with([
+                'error' => $th->getMessage()
+            ]);
+        }
     }
 
     /**
@@ -108,34 +150,20 @@ class ComputerController extends Controller
         DB::beginTransaction();
 
 
+        Accessory::where('computer_id', $computer->id)->delete();
+        Software::where('computer_id', $computer->id)->delete();
+        $computer->delete();
 
-        try {
-            Accessory::where('computer_id', $computer->id)->delete();
-            Software::where('computer_id', $computer->id)->delete();
-            $computer->delete();
+        DB::rollBack();
 
-            DB::commit();
-
-            if (!request()->inertia() && request()->expectsJson()) {
-                return response()->json([
-                    'message' => 'Data ruangan berhasil dihapus',
-                    'status' => true,
-                    'data' => $computer
-                ]);
-            }
-
-            return Redirect::route('computers.index')->with('message', 'Berhasil menghapus data');
-        } catch (\Throwable $th) {
-            //throw $th;
-            DB::rollBack();
-            if (!request()->inertia() && request()->expectsJson()) {
-                return response()->json([
-                    'message' => $th->getMessage(),
-                    'status' => false,
-                    'data' => $computer
-                ]);
-            }
-            return Redirect::back()->with('error', 'Terjadi kesalahan pada sisi server.');
+        if (!request()->inertia() && request()->expectsJson()) {
+            return response()->json([
+                'message' => 'Data ruangan berhasil dihapus',
+                'status' => true,
+                'data' => $computer
+            ]);
         }
+
+        return Redirect::route('computers.index')->with('message', 'Berhasil menghapus data');
     }
 }
