@@ -43,19 +43,19 @@ class ComputerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ComputerStoreRequest $request)
+    public function store(ComputerStoreRequest $request): \Illuminate\Http\RedirectResponse
     {
         DB::beginTransaction();
-        try {
+
 
             $data = $request->validated();
-            $computer = Computer::create($data);
+            $computer = Computer::query()->create($data);
 
             $accessories = $data['accessories'] ?? [];
             $softwares = $data['softwares'] ?? [];
 
             foreach ($accessories as $accessory) {
-                Accessory::create([
+                Accessory::query()->create([
                     'name' => $accessory['name'],
                     'type' => $accessory['type'],
                     'condition' => $accessory['condition'],
@@ -74,12 +74,7 @@ class ComputerController extends Controller
             return Redirect::route('computers.index')->with([
                 'message' => 'Data berhasil disimpan'
             ]);
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            return Redirect::back()->with([
-                'error' => $th->getMessage()
-            ]);
-        }
+
     }
 
     /**

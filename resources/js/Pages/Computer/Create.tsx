@@ -121,8 +121,8 @@ const Create = ({
 
         if(computer !== undefined) {
             setData({...computer});
-            setAccessories([...computer.accessories ?? []])
-            setSoftwares([...computer.softwares ?? []]);
+            setAccessories([...computer?.accessories ?? []])
+            setSoftwares([...computer?.softwares ?? []]);
         }
     }, []);
 
@@ -415,7 +415,7 @@ const Create = ({
                                         id="powerSupply"
                                         type="text"
                                         placeholder="E.g: PSU-123"
-                                        value={data.motherboard}
+                                        value={data.power_supply}
                                         onChange={(e) =>
                                             setData(
                                                 "power_supply",
