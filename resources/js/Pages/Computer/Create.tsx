@@ -26,12 +26,8 @@ const Create = ({
 }: PageProps & { computer: Computer | undefined }) => {
     const [rooms, setRooms] = useState<Room[]>([]);
     const { data, setData, processing, post, errors } = useForm<Computer>();
-    const [accessories, setAccessories] = useState<Accessory[]>([
-        ...(data.accessories ?? []),
-    ]);
-    const [softwares, setSoftwares] = useState<Software[]>([
-        ...(data.softwares ?? []),
-    ]);
+    const [accessories, setAccessories] = useState<Accessory[]>([]);
+    const [softwares, setSoftwares] = useState<Software[]>([]);
 
     const operatingSystemDropdownValues = [
         {
@@ -123,11 +119,11 @@ const Create = ({
             .get(route("rooms.index"))
             .then((response) => setRooms(response.data.data));
 
-        console.log(computer !== undefined);
-
-        computer !== undefined && setData({ ...computer });
-        setAccessories([...(data.accessories ?? [])]);
-        setSoftwares([...(data.softwares ?? [])]);
+        if(computer !== undefined) {
+            setData({...computer});
+            setAccessories([...computer.accessories ?? []])
+            setSoftwares([...computer.softwares ?? []]);
+        }
     }, []);
 
     // Event functions

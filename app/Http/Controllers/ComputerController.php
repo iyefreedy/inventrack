@@ -31,9 +31,11 @@ class ComputerController extends Controller
     {
         $query = request()->query();
 
-        $computer = Computer::query()
+        $computer = isset($query['from']) ? Computer::query()
             ->with(['accessories', 'softwares'])
-            ->findOrFail($query['from']);
+            ->findOrFail($query['from'])
+            ->only(['ram', 'storage', 'motherboard', 'operating_system', 'operating_system_activation', 'processor', 'motherboard', 'power_supply', 'case', 'accessories'])
+            : null;
 
         return Inertia::render('Computer/Create', ['computer' => $computer]);
     }
