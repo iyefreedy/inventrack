@@ -88,7 +88,7 @@ const Index = ({ data, auth, flash }: ComputerIndexPageProps) => {
             });
         }
 
-        setComputer({});
+        hideDeleteComputerDialog();
     };
 
     const duplicate = (id: string) => {

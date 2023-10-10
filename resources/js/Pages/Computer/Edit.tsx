@@ -139,7 +139,7 @@ const Edit = ({
     const onSubmit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        patch(route("computers.update", data as unknown as RouteParam));
+        patch(route("computers.update", data.id as unknown as RouteParam));
     };
 
     const onChangeConditionRating = (e: RatingChangeEvent) => {
@@ -300,6 +300,7 @@ const Edit = ({
                                         autoFocus
                                     />
                                 </div>
+
                                 <div className="field col-12 md:col-3">
                                     <label htmlFor="roomId">Ruang</label>
                                     <Dropdown
@@ -308,6 +309,9 @@ const Edit = ({
                                         onChange={(e) =>
                                             setData("room_id", e.value)
                                         }
+                                        filter
+                                        filterMatchMode="contains"
+                                        filterBy="code,name"
                                         itemTemplate={roomDropdownItemTemplate}
                                         options={rooms}
                                         optionLabel="name"

@@ -47,34 +47,32 @@ class ComputerController extends Controller
     {
         DB::beginTransaction();
 
+        $data = $request->validated();
+        $computer = Computer::query()->create($data);
 
-            $data = $request->validated();
-            $computer = Computer::query()->create($data);
+        $accessories = $data['accessories'] ?? [];
+        $softwares = $data['softwares'] ?? [];
 
-            $accessories = $data['accessories'] ?? [];
-            $softwares = $data['softwares'] ?? [];
-
-            foreach ($accessories as $accessory) {
-                Accessory::query()->create([
-                    'name' => $accessory['name'],
-                    'type' => $accessory['type'],
-                    'condition' => $accessory['condition'],
-                    'computer_id' => $computer->id,
-                ]);
-            }
-
-            foreach ($softwares as $software) {
-                Software::create([
-                    'name' => $software['name'],
-                    'computer_id' => $computer->id,
-                ]);
-            }
-            DB::commit();
-
-            return Redirect::route('computers.index')->with([
-                'message' => 'Data berhasil disimpan'
+        foreach ($accessories as $accessory) {
+            $computer->accessories()->create([
+                'name' => $accessory['name'],
+                'type' => $accessory['type'],
+                'condition' => $accessory['condition'],
+                'computer_id' => $computer->id,
             ]);
+        }
 
+        foreach ($softwares as $software) {
+            $computer->softwares()->create([
+                'name' => $software['name'],
+                'computer_id' => $computer->id,
+            ]);
+        }
+        DB::commit();
+
+        return Redirect::route('computers.index')->with([
+            'message' => 'Data berhasil disimpan'
+        ]);
     }
 
     /**
@@ -102,41 +100,34 @@ class ComputerController extends Controller
     public function update(ComputerUpdateRequest $request, Computer $computer)
     {
         DB::beginTransaction();
-        try {
 
-            $data = $request->validated();
+        $data = $request->validated();
 
-            $computer->update($data);
+        $computer->update($data);
 
-            $accessories = $data['accessories'] ?? [];
-            $softwares = $data['softwares'] ?? [];
+        // $accessories = $data['accessories'] ?? [];
+        // $softwares = $data['softwares'] ?? [];
 
-            foreach ($accessories as $accessory) {
-                Accessory::create([
-                    'name' => $accessory['name'],
-                    'type' => $accessory['type'],
-                    'condition' => $accessory['condition'],
-                    'computer_id' => $computer->id,
-                ]);
-            }
+        // foreach ($accessories as $accessory) {
+        //     Accessory::create([
+        //         'name' => $accessory['name'],
+        //         'type' => $accessory['type'],
+        //         'condition' => $accessory['condition'],
+        //         'computer_id' => $computer->id,
+        //     ]);
+        // }
 
-            foreach ($softwares as $software) {
-                Software::create([
-                    'name' => $software['name'],
-                    'computer_id' => $computer->id,
-                ]);
-            }
-            DB::commit();
+        // foreach ($softwares as $software) {
+        //     Software::create([
+        //         'name' => $software['name'],
+        //         'computer_id' => $computer->id,
+        //     ]);
+        // }
+        DB::commit();
 
-            return Redirect::route('computers.index')->with([
-                'message' => 'Data berhasil disimpan'
-            ]);
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            return Redirect::back()->with([
-                'error' => $th->getMessage()
-            ]);
-        }
+        return Redirect::route('computers.index')->with([
+            'message' => 'Data berhasil disimpan'
+        ]);
     }
 
     /**
@@ -146,20 +137,21 @@ class ComputerController extends Controller
     {
         DB::beginTransaction();
 
-
-        Accessory::where('computer_id', $computer->id)->delete();
-        Software::where('computer_id', $computer->id)->delete();
+        $computer->accessories()->delete();
+        $computer->softwares()->delete();
         $computer->delete();
 
-        DB::rollBack();
+        DB::commit();
 
         if (!request()->inertia() && request()->expectsJson()) {
+            DB::rollBack();
             return response()->json([
                 'message' => 'Data ruangan berhasil dihapus',
                 'status' => true,
                 'data' => $computer
             ]);
         }
+
 
         return Redirect::route('computers.index')->with('message', 'Berhasil menghapus data');
     }
